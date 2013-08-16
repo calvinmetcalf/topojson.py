@@ -1,4 +1,4 @@
-from math import sqrt,pi,cos,sin,atan2,round,atan
+from math import sqrt,pi,cos,sin,atan2,tan,atan,asin
 systems = {}
 systems['cartesian']={}
 systems['spherical']={}
@@ -79,34 +79,33 @@ def sphabsoluteArea(a):
     return a + 4 * pi if a < 0 else a
 
 
-function triangleArea(t) {
-    a = distance(t[0], t[1]);
-    b = distance(t[1], t[2]);
-    c = distance(t[2], t[0]);
-    s = (a + b + c) / 2.0;
-    return 4 * atan(sqrt(Math.max(0, Math.tan(s / 2) * Math.tan((s - a) / 2) * Math.tan((s - b) / 2) * Math.tan((s - c) / 2))));
-}
+def sphtriangleArea(t):
+    a = distance(t[0], t[1])
+    b = distance(t[1], t[2])
+    c = distance(t[2], t[0])
+    s = (a + b + c) / 2.0
+    return 4 * atan(sqrt(max(0, tan(s / 2.0) * tan((s - a) / 2.0) * tan((s - b) / 2.0) * tan((s - c) / 2.0))))
 
-function distance(a, b) {
-  var deltalambda = (b[0] - a[0]) * radians;
-  var sindeltalambda = Math.sin(deltalambda);
-  var cosdeltalambda = Math.cos(deltalambda);
-  var sinphi0 = Math.sin(a[1] * radians);
-  var cosphi0 = Math.cos(a[1] * radians);
-  var sinphi1 = Math.sin(b[1] * radians);
-  var cosphi1 = Math.cos(b[1] * radians);
-  var _;
-  return Math.atan2(Math.sqrt((_ = cosphi1 * sindeltalambda) * _ + (_ = cosphi0 * sinphi1 - sinphi0 * cosphi1 * cosdeltalambda) * _), sinphi0 * sinphi1 + cosphi0 * cosphi1 * cosdeltalambda);
-}
+def distance(a, b):
+    deltalambda = (b[0] - a[0]) * radians
+    sindeltalambda = Math.sin(deltalambda)
+    cosdeltalambda = Math.cos(deltalambda)
+    sinphi0 = Math.sin(a[1] * radians)
+    cosphi0 = Math.cos(a[1] * radians)
+    sinphi1 = Math.sin(b[1] * radians)
+    cosphi1 = Math.cos(b[1] * radians)
+    cs=cosphi1 * sindeltalambda
+    cs2 = cosphi0 * sinphi1 - sinphi0 * cosphi1 * cosdeltalambda
+    return Math.atan2(Math.sqrt(cs * cs + cs2 * cs2), sinphi0 * sinphi1 + cosphi0 * cosphi1 * cosdeltalambda)
 
-function haversinDistance(x0, y0, x1, y1) {
-  x0 *= radians;
-  y0 *= radians;
-  x1 *= radians;
-  y1 *= radians;
-  return 2 * Math.asin(Math.sqrt(haversin(y1 - y0) + Math.cos(y0) * Math.cos(y1) * haversin(x1 - x0)));
-}
+def sphhaversinDistance(x0, y0, x1, y1)
+    x0 *= radians;
+    y0 *= radians;
+    x1 *= radians;
+    y1 *= radians;
+    return 2.0 * asin(sqrt(haversin(y1 - y0) + cos(y0) * cos(y1) * haversin(x1 - x0)))
 
-function haversin(x) {
-  return (x = Math.sin(x / 2)) * x;
-}
+
+def haversin(x):
+    x = sin(x / 2.0))
+    return x*x
