@@ -3,17 +3,17 @@ typeGeometries = {
 	'MultiLineString': 1,
 	'MultiPoint': 1,
 	'MultiPolygon: 1,
-	Point: 1,
-	Polygon: 1,
-	GeometryCollection: 1
-};
+	'Point': 1,
+	'Polygon': 1,
+	'GeometryCollection': 1
+}
 
-var typeObjects = {
-	Feature: 1,
-	FeatureCollection: 1
-};
+typeObjects = {
+	'Feature': 1,
+	'FeatureCollection': 1
+}
 
-class typeDefaults:
+class types:
 	def Feature(self,feature):
 		if feature.has_key('geometry'):
 			self.geometry(feature['geometry'])
@@ -74,13 +74,3 @@ class typeDefaults:
 	def polygon(self,coordinates) {
 		for coordinate in coordinates:
 			self.line(coordinate)
-
-module.exports = function(types) {
-	for (var type in typeDefaults) {
-		if (!(type in types)) {
-			types[type] = typeDefaults[type];
-		}
-	}
-	types.defaults = typeDefaults;
-	return types;
-};
