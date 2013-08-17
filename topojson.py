@@ -1,4 +1,5 @@
-from types import types
+# coding=utf8
+from mytypes import types
 from stitchpoles import stitch
 from hashtable import hashtable
 from coordinatesystems import systems

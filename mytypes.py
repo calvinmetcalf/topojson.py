@@ -18,7 +18,7 @@ class types:
 		for coordinate in multiPoint['coordinates']:
 			self.point(coordinate);
 	def MultiPolygon(self,multiPolygon):
-		for coordinate in multiPolygon['coordinates']
+		for coordinate in multiPolygon['coordinates']:
 			self.polygon(coordinate);
 
 	def Point(self,point):
@@ -32,16 +32,16 @@ class types:
 			return self[object.type](object)
 		else:
 			return self.geometry(object)
-	def geometry(self,geometry) {
-		if(geometry != Noneand typeGeometries.has_key(geometry['type'])):
-			return self[geometry['type'](geometry)
+	def geometry(self,geometry):
+		if(geometry != None and typeGeometries.has_key(geometry['type'])):
+			return self.geometry['type'](geometry)
 		else:
-			return None;
+			return None
 	def point(self):
 		pass
 	def line(self,coordinates):
 		for coordinate in coordinates:
 			self.point(coordinate)
-	def polygon(self,coordinates) {
+	def polygon(self,coordinates):
 		for coordinate in coordinates:
 			self.line(coordinate)

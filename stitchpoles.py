@@ -1,4 +1,4 @@
-from types import types
+from mytypes import types
 
 def stitch (objects, options):
 	verbose = false;
