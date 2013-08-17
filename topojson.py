@@ -37,7 +37,8 @@ def topology (objects, options=False):
 	arcsByPoint = hashtable(Q * 10);
 	pointsByPoint = hashtable(Q * 10);
 
-	def each(t):
+	def each(r):
+		t=r()
 		out = {}
 		for key in objects:
 			out[key] = t.object(objects[key])

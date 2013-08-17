@@ -1,3 +1,6 @@
+
+
+
 class types:
 	def Feature(self,feature):
 		if feature.has_key('geometry'):
@@ -28,7 +31,7 @@ class types:
 	def object(self,object):
 		if object == None:
 			return None
-		elif typeObjects.has_key(object[type]):
+		elif object['type']=='Feature' or object['type']=='FeatureCollection':
 			return self[object.type](object)
 		else:
 			return self.geometry(object)
