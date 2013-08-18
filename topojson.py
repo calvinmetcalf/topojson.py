@@ -137,27 +137,28 @@ def topology (objects, options=False):
 					k = i
 		i = -1
 		m = n if open else n + 1
-		while i < m:
-			i+=1
-			point = points[(i + k) % n]
-			p = coincidences.peak(point)
-			if  not linesEqual(p, t):
-				tInP = all(map(lambda line: line in p,t))
-				pInT = all(map(lambda line: line in t,p))
-				if tInP:
-					a.append(point);
-				arc(a)
-				if not tInP and not pInT:
-					arc([a[-1], point])
-				if pInT:
-					a = [a[-1]]
-				else:
-					a = [];
-			if not len(a) or pointCompare(a[-1], point):
-				a.append(point) # skip duplicate points
-			t = p
-		arc(a, True)
-		def arc(a, last):
+		def matchForward(b):
+			i = 0;
+			if len(b) != n:
+				return False
+			while i < n:
+				if pointCompare(a[i], b[i]):
+					return False;
+				i+=1
+			lineArcs.append(b['index'])
+			return True;
+
+		def matchBackward(b):
+			i = 0
+			if len(b) != n:
+				return False
+			while i<n:
+				if pointCompare(a[i], b[n - i - 1]):
+					return False
+				i+=1
+			lineArcs.append(~b['index'])
+			return True
+		def arc(a, last=False):
 			n = len(a)
 			point=False
 			if last and not len(lineArcs) and n == 1:
@@ -180,27 +181,28 @@ def topology (objects, options=False):
 				a['index']=len(arcs)
 				lineArcs.append(a['index'])
 				arcs.append(a)
-		def matchForward(b):
-			i = 0;
-			if len(b) != n:
-				return False
-			while i < n:
-				if pointCompare(a[i], b[i]):
-					return False;
-				i+=1
-			lineArcs.append(b['index'])
-			return True;
-
-		def matchBackward(b):
-			i = 0
-			if len(b) != n:
-				return False
-			while i<n:
-				if pointCompare(a[i], b[n - i - 1]):
-					return False
-				i+=1
-			lineArcs.append(~b['index'])
-			return True
+		while i < m:
+			i+=1
+			point = points[(i + k) % n]
+			p = coincidences.peak(point)
+			if  not linesEqual(p, t):
+				tInP = all(map(lambda line: line in p,t))
+				pInT = all(map(lambda line: line in t,p))
+				if tInP:
+					a.append(point);
+				arc(a)
+				if not tInP and not pInT:
+					arc([a[-1], point])
+				if pInT:
+					a = [a[-1]]
+				else:
+					a = [];
+			if not len(a) or pointCompare(a[-1], point):
+				a.append(point) # skip duplicate points
+			t = p
+		arc(a, True)
+		
+		
 		return lineArcs
 	polygon = lambda poly:map(lineClosed,poly)
 	lineClosed = lambda points:line(points,False)
