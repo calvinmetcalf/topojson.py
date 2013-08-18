@@ -103,6 +103,105 @@ def topology (objects, options=False):
 				if not line in lines:
 					lines.append(line)
 	each(newLineFunc)
+	def line(points, open):
+		lineArcs = [];
+		n = len(points)
+		a = []
+		k = -1
+		p=False
+		if not open:
+			points.pop()
+			n-=1
+		while k<n:
+			k+=1
+			t = coincidences.peak(points[k])
+			if open:
+				break
+			if p and not linesEqual(p, t):
+				tInP = all(map(lambda line: line in p,t))
+				pInT = all(map(lambda line: line in t,p))
+				if tInP and not pInT:
+					k-=1
+				break;
+			p = t;
+		# If no shared starting point is found for closed lines, rotate to minimum.
+		if k == n and len(p) > 1:
+			point0 = points[0]
+			i = -1
+			k=0
+			while i<n:
+				i+=1
+				point = points[i];
+				if pointCompare(point0, point) > 0:
+					point0 = point
+					k = i
+		i = -1
+		m = n if open else n + 1
+		while i < m:
+			i+=1
+			point = points[(i + k) % n]
+			p = coincidences.peak(point)
+			if  not linesEqual(p, t):
+				tInP = all(map(lambda line: line in p,t))
+				pInT = all(map(lambda line: line in t,p))
+				if tInP:
+					a.append(point);
+				arc(a)
+				if not tInP and not pInT:
+					arc([a[-1], point])
+				if pInT:
+					a = [a[-1]]
+				else:
+					a = [];
+			if not len(a) or pointCompare(a[-1], point):
+				a.append(point) # skip duplicate points
+			t = p
+		arc(a, True)
+		def arc(a, last):
+			n = len(a)
+			point=False
+			if last and not len(lineArcs) and n == 1:
+				point = a[0]
+				index = pointsByPoint.get(point)
+				if len(index):
+					lineArcs.append(index[0])
+				else:
+					index[0] = len(arcs)
+					lineArcs.append(index[0])
+					arcs.append(a)
+			elif n > 1:
+				a0 = a[0]
+				a1 = a[-1]
+				point = a0 if pointCompare(a0, a1) < 0 else a1
+				pointArcs = arcsByPoint.get(point)
+				if any(map(matchForward,pointArcs)) or any(map(matchBackward,pointArcs)):
+					return
+				pointArcs.append(a)
+				a['index']=len(arcs)
+				lineArcs.append(a['index'])
+				arcs.append(a)
+		def matchForward(b):
+			i = 0;
+			if len(b) != n:
+				return False
+			while i < n:
+				if pointCompare(a[i], b[i]):
+					return False;
+				i+=1
+			lineArcs.append(b['index'])
+			return True;
+
+		def matchBackward(b):
+			i = 0
+			if len(b) != n:
+				return False
+			while i<n:
+				if pointCompare(a[i], b[n - i - 1]):
+					return False
+				i+=1
+			lineArcs.append(~b['index'])
+			return True
+		return lineArcs
 	polygon = lambda poly:map(lineClosed,poly)
 	lineClosed = lambda points:line(points,False)
 	lineOpen = lambda points:line(points,True)
@@ -154,105 +253,7 @@ def topology (objects, options=False):
 
 	coincidences = arcsByPoint = pointsByPoint = None
 
-	def line(points, open):
-		lineArcs = [];
-		n = len(points)
-		a = []
-		k = -1
-		p=False
-		if not open:
-			points.pop()
-			n-=1
-		while k<n:
-			k+=1
-			t = coincidences['peek'](points[k])
-			if open:
-				break
-			if p and not linesEqual(p, t):
-				tInP = all(map(lambda line: line in p,t))
-				pInT = all(map(lambda line: line in t,p))
-				if tInP and not pInT:
-					k-=1
-				break;
-			p = t;
-		# If no shared starting point is found for closed lines, rotate to minimum.
-		if k == n and len(p) > 1:
-			point0 = points[0]
-			i = -1
-			k=0
-			while i<n:
-				i+=1
-				point = points[i];
-				if pointCompare(point0, point) > 0:
-					point0 = point
-					k = i
-		i = -1
-		m = n if open else n + 1
-		while i < m:
-			i+=1
-			point = points[(i + k) % n]
-			p = coincidences['peek'](point)
-			if  not linesEqual(p, t):
-				tInP = all(map(lambda line: line in p,t))
-				pInT = all(map(lambda line: line in t,p))
-				if tInP:
-					a.append(point);
-				arc(a)
-				if not tInP and not pInT:
-					arc([a[-1], point])
-				if pInT:
-					a = [a[-1]]
-				else:
-					a = [];
-			if not len(a) or pointCompare(a[-1], point):
-				a.append(point) # skip duplicate points
-			t = p
-		arc(a, True)
-		def arc(a, last):
-			n = len(a)
-			point=False
-			if last and not len(lineArcs) and n == 1:
-				point = a[0]
-				index = pointsByPoint['get'](point)
-				if len(index):
-					lineArcs.append(index[0])
-				else:
-					index[0] = len(arcs)
-					lineArcs.append(index[0])
-					arcs.append(a)
-			elif n > 1:
-				a0 = a[0]
-				a1 = a[-1]
-				point = a0 if pointCompare(a0, a1) < 0 else a1
-				pointArcs = arcsByPoint['get'](point)
-				if any(map(matchForward,pointArcs)) or any(map(matchBackward,pointArcs)):
-					return
-				pointArcs.append(a)
-				a['index']=len(arcs)
-				lineArcs.append(a['index'])
-				arcs.append(a)
-		def matchForward(b):
-			i = 0;
-			if len(b) != n:
-				return False
-			while i < n:
-				if pointCompare(a[i], b[i]):
-					return False;
-				i+=1
-			lineArcs.append(b['index'])
-			return True;
-
-		def matchBackward(b):
-			i = 0
-			if len(b) != n:
-				return False
-			while i<n:
-				if pointCompare(a[i], b[n - i - 1]):
-					return False
-				i+=1
-			lineArcs.append(~b['index'])
-			return True
-		return lineArcs
+	
 	return {
 		'type': "Topology",
 		'bbox': [x0, y0, x1, y1],
