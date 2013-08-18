@@ -1,39 +1,36 @@
 from math import ceil, log
 
 def hasher(size):
-    mask = int(size) - 1;
-    def retFunc(point):
-        key = (int(point[0]) + 31 * int(point[1])) | 0
-        return (~key if key < 0 else key) & mask
-    return retFunc
+	mask = int(size) - 1;
+	def retFunc(point):
+		key = (int(point[0]) + 31 * int(point[1])) | 0
+		return (~key if key < 0 else key) & mask
+	return retFunc
 
-def hashtable(size):
-    size = 1 << int(ceil(log(size)/log(2)))
-    table = tuple(map(lambda x:False,range(0,size)))
-    h = hasher(size)
-    r = {}
-    r['size']=size
-    def peak(key):
-        matches = table[h(key)]
-        if matches:
-            for match in matches:
-                if equal(match['key'], key):
-                    return match['values']
-        return None
-    r['peak']=peak
-    def get(key):
-        index = h(key)
-        matches = table[index]
-        if (matches):
-            for match in matches:
-                if equal(match['key'], key):
-                    return match['values']
-        else:
-            matches = table[index] = []
-        values = []
-        matches.append({'key': key, 'values': values});
-        return values;
-    r['get']=get
-    return r
+class hashtable:
+	def __init__(self,size):
+		self.size = 1 << int(ceil(log(size)/log(2)))
+		self.table = map(lambda x:False,range(0,int(size)))
+		self.h = hasher(size)
+		
+	def peak(self,key):
+		matches = self.table[self.h(key)]
+		if matches:
+			for match in matches:
+				if equal(match['key'], key):
+					return match['values']
+		return None
+	def get(self,key):
+		index = self.h(key)
+		matches = self.table[index]
+		if (matches):
+			for match in matches:
+				if equal(match['key'], key):
+					return match['values']
+		else:
+			matches = self.table[index] = []
+		values = []
+		matches.append({'key': key, 'values': values});
+		return values;
 def equal(keyA, keyB):
-    return keyA[0] == keyB[0] and keyA[1] == keyB[1]
+	return keyA[0] == keyB[0] and keyA[1] == keyB[1]

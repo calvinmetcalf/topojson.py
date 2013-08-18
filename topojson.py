@@ -3,6 +3,7 @@ from mytypes import types
 from stitchpoles import stitch
 from hashtable import hashtable
 from coordinatesystems import systems
+from bounds import bound
 
 e = 1e-6
 def isInfinit(n):
@@ -18,7 +19,6 @@ def topology (objects, options=False):
 	emax = 0
 	system = False
 	arcs = []
-	x0=y0=x1=y1=kx=ky=False
 	if type(options)==type({}):
 		if options.has_key('verbose'):
 			verbose = not not options['verbose']
@@ -39,29 +39,11 @@ def topology (objects, options=False):
 
 	def each(r):
 		t=r()
-		out = {}
-		for key in objects:
-			out[key] = t.object(objects[key])
-			if not out[key]:
-				out[key]={}
+		out = t.obj(objects)
 		return out
 
-	def bound():
-		[x0,x1]=[y0,y1]=[float('inf'),-float('inf')]
-		class boundit(types):
-			def point (self,point):
-				x = point[0]
-				y = point[1]
-				if x < x0:
-					x0 = x;
-				if x > x1:
-					x1 = x;
-				if y < y0:
-					y0 = y;
-				if y > y1:
-					y1 = y;
-		each(boundit)
-	bound()
+	
+	[x0,x1,y0,y1]=bound(objects)
 	
 	oversize = x0 < -180 - e or x1 > 180 + e or y0 < -90 - e or y1 > 90 + e
 	if not system:
@@ -76,7 +58,7 @@ def topology (objects, options=False):
 			raise Exception(u"spherical coordinates outside of [±180°, ±90°]")
 		if stitchPoles:
 			stitch(objects)
-			bound()
+			[x0,x1,y0,y1]=bound(objects)
 		if x0 < -180 + e:
 			x0 = -180
 		if x1 > 180 - e:
@@ -94,44 +76,36 @@ def topology (objects, options=False):
 		y0 = 0;
 	if isInfinit(y1):
 		y1 = 0;
-	if Q:
-		kx = (Q - 1) / (x1 - x0) if x1 - x0 else 1
-		ky = (Q - 1) / (y1 - y0) if y1 - y0 else 1;
-	else:
-		print("quantization: disabled; assuming inputs already quantized")
-		Q = x1 + 1;
-		kx = ky = 1;
-		x0 = y0 = 0;
-	if verbose:
-		qx0 = round((x0 - x0) * kx) * (1 / kx) + x0
-		qx1 = round((x1 - x0) * kx) * (1 / kx) + x0
-		qy0 = round((y0 - y0) * ky) * (1 / ky) + y0
-		qy1 = round((y1 - y0) * ky) * (1 / ky) + y0
-		print("quantization: bounds " + str(qx0)+str(qy0)+str(qx1)+str(qy1) + " (" + system.name + ")")
+	[kx,ky]=makeKs(Q,x0,x1,y0,y1)
+	if not Q:
+		Q = x1 + 1
+		x0 = y0 = 0
 	class newPointFunc(types):
+		def __init__(self):
+			self.emax=0
 		def point(self,point):
 			x1 = point[0]
 			y1 = point[1]
 			x = round((x1 - x0) * kx)
 			y = round((y1 - y0) * ky)
-			ee = system.distance(x1, y1, x / kx + x0, y / ky + y0)
-			if ee > emax:
-				emax = ee
+			ee = system['distance'](x1, y1, x / kx + x0, y / ky + y0)
+			if ee > self.emax:
+				self.emax = ee
 			point[0] = x
 			point[1] = y
-
-	each(newPointFunc)
+	finde=newPointFunc()
+	finde.obj(objects)
+	emax = finde.emax
 	class newLineFunc(types):
-		def line(line):
-			i = 0
-			n = len(line)
-			while i < n:
-				lines = coincidences.get(line[i])
+		def line(self,line):
+			for point in line:
+				lines = coincidences.get(point)
 				if not line in lines:
 					lines.append(line)
-				i+=0
 	each(newLineFunc)
-
+	polygon = lambda poly:map(lineClosed,poly)
+	lineClosed = lambda points:line(points,False)
+	lineOpen = lambda points:line(points,True)
 	#Convert features to geometries, and stitch together arcs.
 	class bigEach(types):
 		def Feature (self,feature):
@@ -162,7 +136,7 @@ def topology (objects, options=False):
 			if geometry == None:
 				geometry = {};
 			else:
-				super(types,self).geometry(geometry)
+				types.geometry(self,geometry)
 			geometry['id'] = id(geometry)
 			if geometry['id'] == None:
 				del geometry['id']
@@ -180,9 +154,6 @@ def topology (objects, options=False):
 
 	coincidences = arcsByPoint = pointsByPoint = None
 
-	polygon = lambda poly:map(lineClosed,poly)
-	lineClosed = lambda points:line(points,False)
-	lineOpen = lambda points:line(points,True)
 	def line(points, open):
 		lineArcs = [];
 		n = len(points)
@@ -282,38 +253,45 @@ def topology (objects, options=False):
 			lineArcs.append(~b['index'])
 			return True
 		return lineArcs
-	def mapFunc (arc):
-		i = 1;
-		n = len(arc)
-		point = arc[0]
-		x1 = point[0]
-		x2= dx =y2 = dy=False
-		y1 = point[1]
-		points = [[x1, y1]]
-		while i < n:
-			point = arc[i]
-			x2 = point[0]
-			y2 = point[1]
-			dx = x2 - x1
-			dy = y2 - y1
-			if dx or dy:
-				points.append([dx, dy])
-				x1 = x2
-				y1 = y2
-			i+=1
-		return points
 	return {
 		'type': "Topology",
 		'bbox': [x0, y0, x1, y1],
 		'transform': {
-			'scale': [1 / kx, 1 / ky],
+			'scale': [1.0 / kx, 1.0 / ky],
 			'translate': [x0, y0]
 		},
-		'objects': objects,
-		'arcs': map(mapFunc,arcs)
+		'obj': objects,
+		'arcs': makeArcs(arcs)
 	}
 
+makeArcs = lambda arcs:map(mapFunc,arcs)
 
+def mapFunc (arc):
+	i = 1;
+	n = len(arc)
+	point = arc[0]
+	x1 = point[0]
+	x2= dx =y2 = dy=False
+	y1 = point[1]
+	points = [[x1, y1]]
+	while i < n:
+		point = arc[i]
+		x2 = point[0]
+		y2 = point[1]
+		dx = x2 - x1
+		dy = y2 - y1
+		if dx or dy:
+			points.append([dx, dy])
+			x1 = x2
+			y1 = y2
+		i+=1
+	return points
+
+def makeKs(Q,x0,x1,y0,y1):
+	if Q:
+		return [(Q - 1) / (x1 - x0) if x1 - x0 else 1,(Q - 1) / (y1 - y0) if y1 - y0 else 1]
+	else:
+		return [1,1]
 def linesEqual(a, b):
 	n = len(a);
 	i = 0
