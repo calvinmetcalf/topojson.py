@@ -103,13 +103,12 @@ def topology (objects, options=False):
 		lineArcs = [];
 		n = len(points)
 		a = []
-		k = -1
+		k = 0
 		p=False
 		if not open:
 			points.pop()
 			n-=1
 		while k<n:
-			k+=1
 			t = coincidences.peak(points[k])
 			if open:
 				break
@@ -120,6 +119,7 @@ def topology (objects, options=False):
 					k-=1
 				break;
 			p = t;
+			k+=1
 		# If no shared starting point is found for closed lines, rotate to minimum.
 		if k == n and len(p) > 1:
 			point0 = points[0]
@@ -198,8 +198,6 @@ def topology (objects, options=False):
 				a.append(point) # skip duplicate points
 			t = p
 		arc(a, True)
-		
-		
 		return lineArcs
 	polygon = lambda poly:map(lineClosed,poly)
 	lineClosed = lambda points:line(points,False)
