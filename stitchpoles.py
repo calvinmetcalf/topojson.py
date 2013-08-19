@@ -1,7 +1,7 @@
 from mytypes import types
 
-def stitch (objects, options):
-	verbose = false;
+def stitch (objects, options=False):
+	verbose = False;
 
 	if type(options)==type({}) and options.has_key("verbose"):
 		verbose = not not options['verbose']
@@ -36,6 +36,5 @@ def stitch (objects, options):
 							i = i0;
 						a = b = c = False;
 					i+=1
-	
-	for key in objects:
-		stitchit.object(objects[key])
+	stic = stitchit()
+	stic.obj(objects)
