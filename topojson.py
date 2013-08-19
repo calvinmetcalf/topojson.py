@@ -12,8 +12,9 @@ def isInfinit(n):
 def topology (objects, options=False):
 	Q = 1e4; # precision of quantization
 	id = lambda d:d['id']
-	def propertyTransform ():
-		pass
+	def propertyTransform (outprop, key, inprop):
+		outprop[key]=inprop
+		return True
 	stitchPoles = True;
 	verbose = False;
 	emax = 0
@@ -186,7 +187,7 @@ def topology (objects, options=False):
 			i+=1
 			point = points[(i + k) % n]
 			p = coincidences.peak(point)
-			if  not linesEqual(p, t):
+			if not linesEqual(p, t):
 				tInP = all(map(lambda line: line in p,t))
 				pInT = all(map(lambda line: line in t,p))
 				if tInP:
@@ -222,7 +223,7 @@ def topology (objects, options=False):
 		def FeatureCollection(self,collection):
 			collection['type'] = "GeometryCollection";
 			collection['geometries'] = map(self.Feature,collection['features'])
-			del collection.features
+			del collection['features']
 			return collection
 		def GeometryCollection(self,collection):
 			collection['geometries'] = map(self.geometry,collection['geometries'])
@@ -242,7 +243,7 @@ def topology (objects, options=False):
 			geometry['id'] = id(geometry)
 			if geometry['id'] == None:
 				del geometry['id']
-			properties0 = geometry.properties
+			properties0 = geometry['properties']
 			if properties0:
 				properties1 = {}
 				del geometry['properties']
@@ -256,7 +257,6 @@ def topology (objects, options=False):
 
 	coincidences = arcsByPoint = pointsByPoint = None
 
-	
 	return {
 		'type': "Topology",
 		'bbox': [x0, y0, x1, y1],
@@ -264,13 +264,15 @@ def topology (objects, options=False):
 			'scale': [1.0 / kx, 1.0 / ky],
 			'translate': [x0, y0]
 		},
-		'obj': objects,
+		'objects': {'name':objects},
 		'arcs': makeArcs(arcs)
 	}
 
 makeArcs = lambda arcs:map(mapFunc,arcs)
 
 def mapFunc (arc):
+	if len(arc)==2 and type(arc[0])==type(1):
+		return [arc]
 	i = 1;
 	n = len(arc)
 	point = arc[0]
@@ -280,6 +282,9 @@ def mapFunc (arc):
 	points = [[x1, y1]]
 	while i < n:
 		point = arc[i]
+		if not isPoint(point):
+			i+=1
+			continue
 		x2 = point[0]
 		y2 = point[1]
 		dx = x2 - x1
@@ -297,6 +302,8 @@ def makeKs(Q,x0,x1,y0,y1):
 	else:
 		return [1,1]
 def linesEqual(a, b):
+	if not(type(a)==type(b)==type([])):
+		return True
 	n = len(a);
 	i = 0
 	if len(b) != n:
@@ -308,4 +315,7 @@ def linesEqual(a, b):
 	return True;
 
 def pointCompare(a, b):
-	return a[0] - b[0] or a[1] - b[1]
+	if isPoint(a) and isPoint(b):
+		return a[0] - b[0] or a[1] - b[1]
+
+isPoint = lambda x : type(x)==type([]) and len(x)==2
