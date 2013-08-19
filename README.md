@@ -15,3 +15,8 @@ haven't tested this yet. Help and pull requests appreciated (especially from tho
 more fluent at python then I).
 
 **OMFG THIS IS SUPER ALPHA DON'T USE ANYWHERE YOU DON'T MIND EXPLODING**
+
+known issues:
+
+- no arcs are actually de duped
+- some arcs are reversed at random
