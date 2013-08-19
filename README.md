@@ -20,3 +20,4 @@ known issues:
 
 - no arcs are actually de duped
 - some arcs are reversed at random
+- coding style only a mother could love
