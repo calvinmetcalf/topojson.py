@@ -10,6 +10,8 @@ typeGeometries = (
 )
 
 class types:
+	def __init__(self,obj):
+		self.obj(obj)
 	def Feature(self,feature):
 		if feature.has_key('geometry'):
 			self.geometry(feature['geometry'])
@@ -37,13 +39,14 @@ class types:
 		self.polygon(polygon['coordinates'])
 	def obj(self,obj):
 		if obj == None :
-			return None
+			self.outObj = None
 		elif obj['type']=='Feature':
-			return self.Feature(obj)
+			self.outObj = self.Feature(obj)
 		elif obj['type']=='FeatureCollection':
-			return self.FeatureCollection(obj)
+			self.outObj = self.FeatureCollection(obj)
 		else:
-			return self.geometry(obj)
+			self.outObj = self.geometry(obj)
+		return self.outObj
 	def geometry(self,geometry):
 		if not (geometry != None and geometry['type'] in typeGeometries):
 			return None

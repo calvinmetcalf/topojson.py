@@ -36,5 +36,4 @@ def stitch (objects, options=False):
 							i = i0;
 						a = b = c = False;
 					i+=1
-	stic = stitchit()
-	stic.obj(objects)
+	stitchit(objects)

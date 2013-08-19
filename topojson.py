@@ -38,11 +38,6 @@ def topology (objects, options=False):
 	arcsByPoint = hashtable(Q * 10);
 	pointsByPoint = hashtable(Q * 10);
 
-	def each(r):
-		t=r()
-		out = t.obj(objects)
-		return out
-
 	
 	[x0,x1,y0,y1]=bound(objects)
 	
@@ -81,9 +76,10 @@ def topology (objects, options=False):
 	if not Q:
 		Q = x1 + 1
 		x0 = y0 = 0
-	class newPointFunc(types):
-		def __init__(self):
+	class findEmax(types):
+		def __init__(self,obj):
 			self.emax=0
+			self.obj(obj)
 		def point(self,point):
 			x1 = point[0]
 			y1 = point[1]
@@ -94,16 +90,15 @@ def topology (objects, options=False):
 				self.emax = ee
 			point[0] = x
 			point[1] = y
-	finde=newPointFunc()
-	finde.obj(objects)
+	finde=findEmax(objects)
 	emax = finde.emax
-	class newLineFunc(types):
+	class findCoincidences(types):
 		def line(self,line):
 			for point in line:
 				lines = coincidences.get(point)
 				if not line in lines:
 					lines.append(line)
-	each(newLineFunc)
+	fcInst = findCoincidences(objects)
 	def line(points, open):
 		lineArcs = [];
 		n = len(points)
@@ -210,7 +205,7 @@ def topology (objects, options=False):
 	lineClosed = lambda points:line(points,False)
 	lineOpen = lambda points:line(points,True)
 	#Convert features to geometries, and stitch together arcs.
-	class bigEach(types):
+	class makeTopo(types):
 		def Feature (self,feature):
 			geometry = feature["geometry"]
 			if feature['geometry'] == None:
@@ -253,7 +248,8 @@ def topology (objects, options=False):
 			if geometry.has_key('arcs'):
 				del geometry['coordinates']
 			return geometry;
-	objects = each(bigEach)
+	makeTopoInst = makeTopo(objects)
+	objects = makeTopoInst.outObj
 
 	coincidences = arcsByPoint = pointsByPoint = None
 
