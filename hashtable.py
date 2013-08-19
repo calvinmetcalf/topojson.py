@@ -33,7 +33,7 @@ class hashtable:
 		else:
 			matches = self.table[index] = []
 		values = []
-		matches.append({'key': key, 'values': values});
-		return values;
+		matches.append({'key': key, 'values': values})
+		return values
 def equal(keyA, keyB):
 	return keyA[0] == keyB[0] and keyA[1] == keyB[1]

@@ -56,6 +56,8 @@ class types:
 			return self.MultiLineString(geometry)
 		elif geometry['type']== 'MultiPoint':
 			return self.MultiPoint(geometry)
+		elif geometry['type']== 'MultiPolygon':
+			return self.MultiPolygon(geometry)
 		elif geometry['type']== 'Point':
 			return self.Point(geometry)
 		elif geometry['type']== 'Polygon':
