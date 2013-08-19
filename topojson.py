@@ -1,9 +1,10 @@
 # coding=utf8
 from mytypes import types
 from stitchpoles import stitch
-from hashtable import hashtable
 from coordinatesystems import systems
 from bounds import bound
+from line import Line
+from clockwise import clock
 
 e = 1e-6
 def isInfinit(n):
@@ -19,7 +20,6 @@ def topology (objects, options=False):
 	verbose = False;
 	emax = 0
 	system = False
-	arcs = []
 	if type(options)==type({}):
 		if options.has_key('verbose'):
 			verbose = not not options['verbose']
@@ -33,11 +33,13 @@ def topology (objects, options=False):
 			id = options['id']
 		if options.has_key('property-transform'):
 			propertyTransform = options["property-transform"]
+		if options.has_key('name'):
+			objectName = options['name']
+		else:
+			objectName = 'name'
 
-	coincidences = hashtable(Q * 10);
-	arcsByPoint = hashtable(Q * 10);
-	pointsByPoint = hashtable(Q * 10);
-
+	ln = Line(Q)
+	
 	
 	[x0,x1,y0,y1]=bound(objects)
 	
@@ -92,116 +94,15 @@ def topology (objects, options=False):
 			point[1] = y
 	finde=findEmax(objects)
 	emax = finde.emax
+	clock(objects,system['ringArea'])
 	class findCoincidences(types):
 		def line(self,line):
 			for point in line:
-				lines = coincidences.get(point)
+				lines = ln.coincidences.get(point)
 				if not line in lines:
 					lines.append(line)
 	fcInst = findCoincidences(objects)
-	def line(points, open):
-		lineArcs = [];
-		n = len(points)
-		a = []
-		k = 0
-		p=False
-		if not open:
-			points.pop()
-			n-=1
-		while k<n:
-			t = coincidences.peak(points[k])
-			if open:
-				break
-			if p and not linesEqual(p, t):
-				tInP = all(map(lambda line: line in p,t))
-				pInT = all(map(lambda line: line in t,p))
-				if tInP and not pInT:
-					k-=1
-				break;
-			p = t;
-			k+=1
-		# If no shared starting point is found for closed lines, rotate to minimum.
-		if k == n and len(p) > 1:
-			point0 = points[0]
-			i = -1
-			k=0
-			while i<n:
-				i+=1
-				point = points[i];
-				if pointCompare(point0, point) > 0:
-					point0 = point
-					k = i
-		i = -1
-		m = n if open else n + 1
-		def matchForward(b,index):
-			i = 0;
-			if len(b) != n:
-				return False
-			while i < n:
-				if pointCompare(a[i], b[i]):
-					return False;
-				i+=1
-			lineArcs.append(b[index])
-			return True;
-
-		def matchBackward(b,index):
-			i = 0
-			if len(b) != n:
-				return False
-			while i<n:
-				if pointCompare(a[i], b[n - i - 1]):
-					return False
-				i+=1
-			lineArcs.append(~b[index])
-			return True
-		def arc(a, last=False):
-			n = len(a)
-			point=False
-			index=-1
-			if last and not len(lineArcs) and n == 1:
-				point = a[0]
-				index = pointsByPoint.get(point)
-				if len(index):
-					lineArcs.append(index[0])
-				else:
-					index[0] = len(arcs)
-					lineArcs.append(index[0])
-					arcs.append(a)
-			elif n > 1:
-				a0 = a[0]
-				a1 = a[-1]
-				point = a0 if pointCompare(a0, a1) < 0 else a1
-				pointArcs = arcsByPoint.get(point)
-				if any(map(lambda x:matchForward(x,index),pointArcs)) or any(map(lambda x:matchBackward(x,index),pointArcs)):
-					return
-				pointArcs.append(a)
-				a[index]=len(arcs)
-				lineArcs.append(a[index])
-				arcs.append(a)
-		while i < m:
-			i+=1
-			point = points[(i + k) % n]
-			p = coincidences.peak(point)
-			if not linesEqual(p, t):
-				tInP = all(map(lambda line: line in p,t))
-				pInT = all(map(lambda line: line in t,p))
-				if tInP:
-					a.append(point);
-				arc(a)
-				if not tInP and not pInT:
-					arc([a[-1], point])
-				if pInT:
-					a = [a[-1]]
-				else:
-					a = [];
-			if not len(a) or pointCompare(a[-1], point):
-				a.append(point) # skip duplicate points
-			t = p
-		arc(a, True)
-		return lineArcs
-	polygon = lambda poly:map(lineClosed,poly)
-	lineClosed = lambda points:line(points,False)
-	lineOpen = lambda points:line(points,True)
+	polygon = lambda poly:map(ln.lineClosed,poly)
 	#Convert features to geometries, and stitch together arcs.
 	class makeTopo(types):
 		def Feature (self,feature):
@@ -223,11 +124,11 @@ def topology (objects, options=False):
 		def MultiPolygon(self,multiPolygon):
 			multiPolygon['arcs'] = map(polygon,multiPolygon['coordinates'])
 		def Polygon(self,polygon):
-			 polygon['arcs'] = map(lineClosed,polygon['coordinates'])
+			 polygon['arcs'] = map(ln.lineClosed,polygon['coordinates'])
 		def MultiLineString(self,multiLineString):
-			multiLineString['arcs'] = map(lineOpen,multiLineString['coordinates'])
+			multiLineString['arcs'] = map(ln.lineOpen,multiLineString['coordinates'])
 		def LineString(self,lineString):
-			lineString['arcs'] = lineOpen(lineString['coordinates'])
+			lineString['arcs'] = ln.lineOpen(lineString['coordinates'])
 		def geometry(self,geometry):
 			if geometry == None:
 				geometry = {};
@@ -249,8 +150,6 @@ def topology (objects, options=False):
 	makeTopoInst = makeTopo(objects)
 	objects = makeTopoInst.outObj
 
-	coincidences = arcsByPoint = pointsByPoint = None
-
 	return {
 		'type': "Topology",
 		'bbox': [x0, y0, x1, y1],
@@ -258,11 +157,11 @@ def topology (objects, options=False):
 			'scale': [1.0 / kx, 1.0 / ky],
 			'translate': [x0, y0]
 		},
-		'objects': {'name':objects},
-		'arcs': makeArcs(arcs)
+		'objects': {objectName:objects},
+		'arcs': makeArcs(ln.arcs)
 	}
 
-makeArcs = lambda arcs:map(mapFunc,arcs)
+makeArcs = lambda arcs:filter(None,map(mapFunc,arcs))
 
 def mapFunc (arc):
 	if len(arc)==2 and type(arc[0])==type(1):
@@ -291,10 +190,13 @@ def mapFunc (arc):
 	return points
 
 def makeKs(Q,x0,x1,y0,y1):
+	[x,y]=[1,1]
 	if Q:
-		return [(Q - 1) / (x1 - x0) if x1 - x0 else 1,(Q - 1) / (y1 - y0) if y1 - y0 else 1]
-	else:
-		return [1,1]
+		if x1 - x0:
+			x= (Q - 1.0) / (x1 - x0)
+		if y1 - y0:
+			y=(Q - 1.0) / (y1 - y0)
+	return [x,y]
 def linesEqual(a, b):
 	if not(type(a)==type(b)==type([])):
 		return True
