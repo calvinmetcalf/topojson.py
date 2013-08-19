@@ -14,4 +14,4 @@ In theory topology takes a super unpythonic options dict as a second argument,
 haven't tested this yet. Help and pull requests appreciated (especially from those
 more fluent at python then I).
 
-*OMFG THIS IS SUPER ALPHA DON'T USE ANYWHERE YOU DON'T MIND EXPLODING*
+**OMFG THIS IS SUPER ALPHA DON'T USE ANYWHERE YOU DON'T MIND EXPLODING**
