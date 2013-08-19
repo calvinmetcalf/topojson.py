@@ -275,7 +275,7 @@ def mapFunc (arc):
 	x1 = point[0]
 	x2= dx =y2 = dy=False
 	y1 = point[1]
-	points = [[x1, y1]]
+	points = [[int(x1), int(y1)]]
 	while i < n:
 		point = arc[i]
 		if not isPoint(point):
@@ -283,8 +283,8 @@ def mapFunc (arc):
 			continue
 		x2 = point[0]
 		y2 = point[1]
-		dx = x2 - x1
-		dy = y2 - y1
+		dx = int(x2 - x1)
+		dy = int(y2 - y1)
 		if dx or dy:
 			points.append([dx, dy])
 			x1 = x2
