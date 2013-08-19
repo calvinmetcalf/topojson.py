@@ -137,7 +137,7 @@ def topology (objects, options=False):
 					k = i
 		i = -1
 		m = n if open else n + 1
-		def matchForward(b):
+		def matchForward(b,index):
 			i = 0;
 			if len(b) != n:
 				return False
@@ -145,10 +145,10 @@ def topology (objects, options=False):
 				if pointCompare(a[i], b[i]):
 					return False;
 				i+=1
-			lineArcs.append(b['index'])
+			lineArcs.append(b[index])
 			return True;
 
-		def matchBackward(b):
+		def matchBackward(b,index):
 			i = 0
 			if len(b) != n:
 				return False
@@ -156,11 +156,12 @@ def topology (objects, options=False):
 				if pointCompare(a[i], b[n - i - 1]):
 					return False
 				i+=1
-			lineArcs.append(~b['index'])
+			lineArcs.append(~b[index])
 			return True
 		def arc(a, last=False):
 			n = len(a)
 			point=False
+			index=-1
 			if last and not len(lineArcs) and n == 1:
 				point = a[0]
 				index = pointsByPoint.get(point)
@@ -175,11 +176,11 @@ def topology (objects, options=False):
 				a1 = a[-1]
 				point = a0 if pointCompare(a0, a1) < 0 else a1
 				pointArcs = arcsByPoint.get(point)
-				if any(map(matchForward,pointArcs)) or any(map(matchBackward,pointArcs)):
+				if any(map(lambda x:matchForward(x,index),pointArcs)) or any(map(lambda x:matchBackward(x,index),pointArcs)):
 					return
 				pointArcs.append(a)
-				a['index']=len(arcs)
-				lineArcs.append(a['index'])
+				a[index]=len(arcs)
+				lineArcs.append(a[index])
 				arcs.append(a)
 		while i < m:
 			i+=1
