@@ -18,10 +18,10 @@ def clockwisePolygon(rings,area):
 	if len(rings):
 		n=len(rings)
 		if area(r)<0:
-			reverse(r)
+			r=reversed(r)
 	i+=1
 	while i<n:
 		r=rings[i]
 		if area(rings[i]) > 0:
-			reverse(r)
+			r=reversed(r)
 	return rings
