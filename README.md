@@ -4,20 +4,29 @@ Port of [topojson](https://github.com/mbostock/topojson) more of a translation t
 
 ```python
 from topojson import topology
-from json import load,dump
-inJson = load(open('StateRepDistricts.geojson'))
-outJson = topology(inJson)
-dump(outJson,open('StateRepDistricts.topojson','w'))
+#give it a path in and out
+topology(inPath,outPath,options)
+#or file in and path out
+topology(open(inPath),outPath,options)
+#or file in and file out
+topology(open(inPath),open(outPath,'w'),options)
+#or a dict in and filepath (or file like object) out
+topology(json.load(open(inPath)),outPath,options)
+#options is optional
+topology(inPath,outPath)#etc
+#or omit the outThing and it returns a dict
+outTopojson = topology(inPath)
+outTopojson = topology(open(inPath))
+outTopojson = topology(json.load(open(inPath)))
+#options has a can be called by name
+outTopojson = topology(inPath,options={'name':'fancypants','quantization':1e3})
+#combine files
+topology({'name1':load(open(path1)),'name1':load(open(name2))},'compined.topojson')
 ```
 
-In theory topology takes a super unpythonic options dict as a second argument, 
-haven't tested this yet. Help and pull requests appreciated (especially from those
-more fluent at python then I).
-
-**OMFG THIS IS SUPER ALPHA DON'T USE ANYWHERE YOU DON'T MIND EXPLODING**
 
 known issues:
 
-- no arcs are actually de duped
-- some arcs are reversed at random
 - coding style only a mother could love
+- holds everything in memory, this could be bad
+- should be able to incrementally add features
