@@ -167,4 +167,4 @@ class Line:
 			i+=1
 		return points
 	def getArcs (self):
-		filter(lambda point:point and len(point)>1,map(self.mapFunc,self.arcs))
+		return filter(lambda point:point and len(point)>1,map(self.mapFunc,self.arcs))
