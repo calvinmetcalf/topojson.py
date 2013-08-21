@@ -3,30 +3,30 @@
 Port of [topojson](https://github.com/mbostock/topojson) more of a translation then a port at this point, licensed under same BSD license as original, current usage:
 
 ```python
-from topojson import topology
+from topojson import topojson
 #give it a path in and out
-topology(inPath,outPath,options)
+topojson(inPath,outPath,options)
 #or file in and path out
-topology(open(inPath),outPath,options)
+topojson(open(inPath),outPath,options)
 #or file in and file out
-topology(open(inPath),open(outPath,'w'),options)
+topojson(open(inPath),open(outPath,'w'),options)
 #or a dict in and filepath (or file like object) out
-topology(json.load(open(inPath)),outPath,options)
+topojson(json.load(open(inPath)),outPath,options)
 #options is optional
-topology(inPath,outPath)#etc
+topojson(inPath,outPath)#etc
 #or omit the outThing and it returns a dict
-outTopojson = topology(inPath)
-outTopojson = topology(open(inPath))
-outTopojson = topology(json.load(open(inPath)))
+outTopojson = topojson(inPath)
+outTopojson = topojson(open(inPath))
+outTopojson = topojson(json.load(open(inPath)))
 #options has a can be called by name
-outTopojson = topology(inPath,options={'name':'fancypants','quantization':1e3})
+outTopojson = topojson(inPath,options={'name':'fancypants','quantization':1e3})
 #combine files
-topology({'name1':load(open(path1)),'name1':load(open(name2))},'compined.topojson')
+topojson({'name1':load(open(path1)),'name1':load(open(name2))},'compined.topojson')
 ```
 
 
 known issues:
-
+__init__.py
 - coding style only a mother could love
 - holds everything in memory, this could be bad
 - should be able to incrementally add features
