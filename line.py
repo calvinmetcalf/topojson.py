@@ -64,7 +64,7 @@ class Line:
 					k = i
 				i+=1
 		def matchForward(b):
-			i = 0;
+			i = 0
 			if len(b) != n:
 				return False
 			while i < n:

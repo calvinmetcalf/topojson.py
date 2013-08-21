@@ -6,6 +6,7 @@ from bounds import bound
 from line import Line
 from json import dump
 from clockwise import clock
+from decimal import Decimal
 
 e = 1e-6
 def isInfinit(n):
@@ -85,13 +86,13 @@ def topology (objects, options=False):
 		def point(self,point):
 			x1 = point[0]
 			y1 = point[1]
-			x = round((x1 - x0) * kx)
-			y = round((y1 - y0) * ky)
+			x = ((x1 - x0) * kx)
+			y =((y1 - y0) * ky)
 			ee = system['distance'](x1, y1, x / kx + x0, y / ky + y0)
 			if ee > self.emax:
 				self.emax = ee
-			point[0] = int(x)
-			point[1] = int(y)
+			point[0] = Decimal(x).quantize(1)
+			point[1] = Decimal(y).quantize(1)
 	finde=findEmax(objects)
 	emax = finde.emax
 	#dump(objects,open('t1.geojson','w'))
