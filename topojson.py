@@ -4,7 +4,6 @@ from stitchpoles import stitch
 from coordinatesystems import systems
 from bounds import bound
 from line import Line
-from json import dump
 from clockwise import clock
 from decimal import Decimal
 
@@ -91,12 +90,10 @@ def topology (objects, options=False):
 			ee = system['distance'](x1, y1, x / kx + x0, y / ky + y0)
 			if ee > self.emax:
 				self.emax = ee
-			point[0] = Decimal(x).quantize(1)
-			point[1] = Decimal(y).quantize(1)
+			point[0] = int(x)
+			point[1] = int(y)
 	finde=findEmax(objects)
 	emax = finde.emax
-	#dump(objects,open('t1.geojson','w'))
-	#print('dump 1')
 	clock(objects,system['ringArea'])
 	class findCoincidences(types):
 		def line(self,line):
@@ -105,8 +102,6 @@ def topology (objects, options=False):
 				if not line in lines:
 					lines.append(line)
 	fcInst = findCoincidences(objects)
-	#dump(objects,open('t2.geojson','w'))
-	#print('dump 2')
 	polygon = lambda poly:map(ln.lineClosed,poly)
 	#Convert features to geometries, and stitch together arcs.
 	class makeTopo(types):
@@ -153,16 +148,6 @@ def topology (objects, options=False):
 				del geometry['coordinates']
 			return geometry;
 	makeTopoInst = makeTopo(objects)
-	objects = makeTopoInst.outObj
-	arc1 = ln.arcs
-	#dump(arc1,open('a1.json','w'))
-	#print('arc 1')
-	arc2 = map(mapFunc,arc1)
-	#dump(arc2,open('a2.json','w'))
-	#print('arc 2')
-	arc3 = filter(None,arc2)
-	#dump(arc3,open('a3.json','w'))
-	#print('arc 3')
 	return {
 		'type': "Topology",
 		'bbox': [x0, y0, x1, y1],
@@ -170,37 +155,9 @@ def topology (objects, options=False):
 			'scale': [1.0 / kx, 1.0 / ky],
 			'translate': [x0, y0]
 		},
-		'objects': {objectName:objects},
-		'arcs': arc3
+		'objects': {objectName:makeTopoInst.outObj},
+		'arcs': ln.getArcs()
 	}
-
-makeArcs = lambda arcs:filter(lambda point:point and len(point)>1,map(mapFunc,arcs))
-
-def mapFunc (arc):
-	if len(arc)==2 and type(arc[0])==type(1):
-		arc= [arc]
-	i = 1;
-	n = len(arc)
-	point = arc[0]
-	x1 = point[0]
-	x2= dx =y2 = dy=False
-	y1 = point[1]
-	points = [[int(x1), int(y1)]]
-	while i < n:
-		point = arc[i]
-		if not isPoint(point):
-			i+=1
-			continue
-		x2 = point[0]
-		y2 = point[1]
-		dx = int(x2 - x1)
-		dy = int(y2 - y1)
-		if dx or dy:
-			points.append([dx, dy])
-			x1 = x2
-			y1 = y2
-		i+=1
-	return points
 
 def makeKs(Q,x0,x1,y0,y1):
 	[x,y]=[1,1]
