@@ -40,11 +40,15 @@ class types:
 	def obj(self,obj):
 		if obj == None :
 			self.outObj = None
+		elif not obj.has_key('type'):
+			self.outObj = {}
+			for fName in obj:
+				self.outObj[fName]=self.FeatureCollection(obj[fName])
 		elif obj['type']=='Feature':
 			self.outObj = self.Feature(obj)
 		elif obj['type']=='FeatureCollection':
 			self.outObj = self.FeatureCollection(obj)
-		else:
+		elif obj['type'] in typeGeometries:
 			self.outObj = self.geometry(obj)
 		return self.outObj
 	def geometry(self,geometry):

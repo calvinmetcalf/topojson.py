@@ -1,1 +1,1 @@
-from topojson import topology
+from conversion import convert as topology

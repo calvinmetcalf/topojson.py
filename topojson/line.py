@@ -62,7 +62,7 @@ class Line:
 			if len(index):
 				self.lineArcs.append(index[0])
 			else:
-				index[0] = len(self.arcs)
+				index.append(len(self.arcs))
 				self.lineArcs.append(index[0])
 				self.arcs.append(alice)
 		elif n > 1:
@@ -127,7 +127,7 @@ class Line:
 					arthur.append(point);
 				self.arc(arthur)
 				if not tInP and not pInT:
-					arc(strut([arthur[-1], point]))
+					self.arc(strut([arthur[-1], point]))
 				if pInT and len(arthur):
 					arthur = strut([arthur[-1]])
 				else:
@@ -167,4 +167,4 @@ class Line:
 			i+=1
 		return points
 	def getArcs (self):
-		return filter(lambda point:point and len(point)>1,map(self.mapFunc,self.arcs))
+		return map(self.mapFunc,self.arcs)

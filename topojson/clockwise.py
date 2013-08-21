@@ -1,9 +1,14 @@
 def clock(geo,area):
-	if geo.has_key('features') and type(geo['features'])==type([]):
+	if geo.has_key('features') and isinstance(geo['features'],list):
 		clockCollection(geo['features'],area)
 		return map(lambda x:clockFeatures(x,area),geo['features'])
-	elif type(geo['features'])==type([]):
-		clockCollection(geo,area)
+	elif geo.has_key('features') and isinstance(geo['features'],list):
+		return clockCollection(geo,area)
+	else:
+		out = {}
+		for feature in geo:
+			out[feature] = clock(geo[feature],area)
+		return out
 clockCollection = lambda geo,area : map(lambda x:clockFeatures(x,area),geo)
 def clockFeatures(geo,area):
 	if geo.has_key('type'):
