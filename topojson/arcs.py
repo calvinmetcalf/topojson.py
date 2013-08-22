@@ -9,7 +9,7 @@ class Arcs:
 		self.length=0
 	def getIndex(self,point):
 		return self.pointsByPoint.get(point)
-	def getPointArcs(self,point);
+	def getPointArcs(self,point):
 		return self.arcsByPoint.get(point)
 	def coincidenceLines(self,point):
 		return self.coincidences.get(point)
@@ -18,3 +18,5 @@ class Arcs:
 	def push(self,arc):
 		self.arcs.append(arc)
 		self.length+=1
+	def map(self,func):
+		return map(func,self.arcs)

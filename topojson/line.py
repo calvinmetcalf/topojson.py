@@ -162,4 +162,4 @@ class Line:
 			i+=1
 		return points
 	def getArcs (self):
-		return map(self.mapFunc,self.arcs)
+		return self.arcs.map(self.mapFunc)
