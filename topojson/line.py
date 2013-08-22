@@ -1,4 +1,4 @@
-from hashtable import hashtable
+from arcs import Arcs
 isPoint = lambda x : type(x)==type([]) and len(x)==2
 class strut(list):
 	def __init__(self,ite=[]):
@@ -26,12 +26,7 @@ def lineContians(line, lineLine):
 	return False
 class Line:
 	def __init__(self,Q):
-		self.coincidences = hashtable(Q * 10)
-		self.arcsByPoint = hashtable(Q * 10)
-		self.pointsByPoint = hashtable(Q * 10)
-		self.arcs=[]
-		self.forwardOut = []
-		self.backwardOut = []
+		self.arcs = Arcs(Q)
 	def matchForward(self,b,arthur):
 		i = 0
 		n = len(arthur)
@@ -58,26 +53,26 @@ class Line:
 		n = len(alice)
 		if last and not len(self.lineArcs) and n == 1:
 			point = alice[0]
-			index = self.pointsByPoint.get(point)
+			index = self.arcs.getIndex(point)
 			if len(index):
 				self.lineArcs.append(index[0])
 			else:
-				index.append(len(self.arcs))
+				index.append(self.arcs.length)
 				self.lineArcs.append(index[0])
-				self.arcs.append(alice)
+				self.arcs.push(alice)
 		elif n > 1:
 			a0 = alice[0]
 			a1 = alice[-1]
 			point = a0 if pointCompare(a0, a1) < 0 else a1
-			pointArcs = self.arcsByPoint.get(point)
+			pointArcs = self.arcs.getPointArcs(point)
 			if any(map(lambda x:self.matchForward(x,alice),pointArcs)):
 				return
 			if any(map(lambda x:self.matchBackward(x,alice),pointArcs)):
 				return
 			pointArcs.append(alice)
-			alice.index=len(self.arcs)
+			alice.index=self.arcs.length
 			self.lineArcs.append(alice.index)
-			self.arcs.append(alice)
+			self.arcs.push(alice)
 	def line(self,points,opened):
 		self.lineArcs = [];
 		n = len(points)
@@ -89,7 +84,7 @@ class Line:
 			points.pop()
 			n-=1
 		while k < n:
-			t = self.coincidences.peak(points[k])
+			t = self.arcs.peak(points[k])
 			if opened:
 				break
 			if p and not linesEqual(p, t):
@@ -119,7 +114,7 @@ class Line:
 		while i < m:
 			i+=1
 			point = points[(i + k) % n]
-			p = self.coincidences.peak(point)
+			p = self.arcs.peak(point)
 			if not linesEqual(p, t):
 				tInP = all(map(lambda line: line in p,t))
 				pInT = all(map(lambda line: line in t,p))

@@ -99,7 +99,7 @@ def topology (objects, options=False):
 	class findCoincidences(types):
 		def line(self,line):
 			for point in line:
-				lines = ln.coincidences.get(point)
+				lines = ln.arcs.coincidenceLines(point)
 				if not line in lines:
 					lines.append(line)
 	fcInst = findCoincidences(objects)
