@@ -1,1 +1,1 @@
-from geojson import from_topo as geojson
+from conversion import convert as geojson
