@@ -37,4 +37,5 @@ a path if omitied the dict is returned
 known issues:
 - coding style only a mother could love
 - holds everything in memory, this could be bad
-- should be able to incrementally add features
+- should be able to incrementally add features to a topojson object
+- should work with lines

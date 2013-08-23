@@ -121,7 +121,7 @@ class Line:
 				if tInP:
 					arthur.append(point);
 				self.arc(arthur)
-				if not tInP and not pInT:
+				if not tInP and not pInT and len(arthur):
 					self.arc(strut([arthur[-1], point]))
 				if pInT and len(arthur):
 					arthur = strut([arthur[-1]])
