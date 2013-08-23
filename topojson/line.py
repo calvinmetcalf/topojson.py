@@ -121,7 +121,7 @@ class Line:
 				if tInP:
 					arthur.append(point);
 				self.arc(arthur)
-				if not tInP and not pInT and len(arthur):
+				if not tInP and not pInT:
 					self.arc(strut([arthur[-1], point]))
 				if pInT and len(arthur):
 					arthur = strut([arthur[-1]])
@@ -139,7 +139,7 @@ class Line:
 	def mapFunc (self,arc):
 		if len(arc)==2 and type(arc[0])==type(1):
 			arc= [arc]
-		i = 1;
+		i = 1
 		n = len(arc)
 		point = arc[0]
 		x1 = point[0]

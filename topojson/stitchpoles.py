@@ -36,4 +36,6 @@ def stitch (objects, options=False):
 							i = i0;
 						a = b = c = False;
 					i+=1
+		def point(self,p):
+			return p
 	stitchit(objects)

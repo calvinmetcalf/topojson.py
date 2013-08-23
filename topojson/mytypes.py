@@ -68,7 +68,7 @@ class types:
 			return self.Polygon(geometry)
 		elif geometry['type']== 'GeometryCollection':
 			return self.GeometryCollection(geometry)
-	def point(*args):
+	def point(self):
 		pass
 	def line(self,coordinates):
 		for coordinate in coordinates:
