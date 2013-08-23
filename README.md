@@ -28,7 +28,7 @@ can also go the other way.
 
 ```python
 from topojson import geojson
-geojson(topojson,input_name=None,out_geojson=None
+geojson(topojson,input_name=None,out_geojson=None)
 ```
 `topojson` may be a dict, a path, or a file like object, `input_name` is a string and if omited
 the first object in `topojson.objects` is used, `geojson` may be a file like object or
