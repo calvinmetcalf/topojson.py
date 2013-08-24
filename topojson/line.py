@@ -27,24 +27,24 @@ def lineContians(line, lineLine):
 class Line:
 	def __init__(self,Q):
 		self.arcs = Arcs(Q)
-	def arc(self,alice, last=False):
-		n = len(alice)
+	def arc(self,current_arc, last=False):
+		n = len(current_arc)
 		if last and not len(self.lineArcs) and n == 1:
-			point = alice[0]
+			point = current_arc[0]
 			index = self.arcs.getIndex(point)
 			if len(index):
 				self.lineArcs.append(index[0])
 			else:
 				index.append(self.arcs.length)
 				self.lineArcs.append(index[0])
-				self.arcs.push(alice)
+				self.arcs.push(current_arc)
 		elif n > 1:
-			self.lineArcs.append(self.arcs.check(alice))
+			self.lineArcs.append(self.arcs.check(current_arc))
 
 	def line(self,points,opened):
 		self.lineArcs = [];
 		n = len(points)
-		arthur = strut()
+		current_arc = strut()
 		k = 1
 		p=False
 		t=False
@@ -87,18 +87,18 @@ class Line:
 				tInP = all(map(lambda line: line in p,t))
 				pInT = all(map(lambda line: line in t,p))
 				if tInP:
-					arthur.append(point);
-				self.arc(arthur)
-				if not tInP and not pInT and len(arthur):
-					self.arc(strut([arthur[-1], point]))
-				if pInT and len(arthur):
-					arthur = strut([arthur[-1]])
+					current_arc.append(point);
+				self.arc(current_arc)
+				if not tInP and not pInT and len(current_arc):
+					self.arc(strut([current_arc[-1], point]))
+				if pInT and len(current_arc):
+					current_arc = strut([current_arc[-1]])
 				else:
-					arthur = strut();
-			if not len(arthur) or pointCompare(arthur[-1], point):
-				arthur.append(point) # skip duplicate points
+					current_arc = strut();
+			if not len(current_arc) or pointCompare(current_arc[-1], point):
+				current_arc.append(point) # skip duplicate points
 			t = p
-		self.arc(arthur, True)
+		self.arc(current_arc, True)
 		return self.lineArcs
 	def lineClosed(self,points):
 		return self.line(points,False)

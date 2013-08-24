@@ -1,5 +1,5 @@
 from hashtable import hashtable
-import anydbm
+import shelve
 from os import getcwd,remove
 from hashlib import sha1
 isPoint = lambda x : type(x)==type([]) and len(x)==2
@@ -11,9 +11,9 @@ class Arcs:
 		self.coincidences = hashtable(Q * 10)
 		self.arcsByPoint = hashtable(Q * 10)
 		self.pointsByPoint = hashtable(Q * 10)
-		self.arcs=[]
+		self.arcs= shelve.open(getcwd()+'/arcDB')
 		self.length=0
-		self.db = anydbm.open(getcwd()+'/storage','c')
+		self.db = shelve.open(getcwd()+'/storage')
 	def getIndex(self,point):
 		return self.pointsByPoint.get(point)
 	def getPointArcs(self,point):
@@ -23,13 +23,18 @@ class Arcs:
 	def peak(self,point):
 		return self.coincidences.peak(point)
 	def push(self,arc):
-		self.arcs.append(arc)
+		self.arcs[str(self.length)]=arc
 		self.length+=1
 		return self.length
 	def map(self,func):
 		self.db.close()
 		remove(getcwd()+'/storage')
-		return map(func,self.arcs)
+		out = []
+		for num in range(0,self.length):
+			out.append(func(self.arcs[str(num)]))
+		self.arcs.close()
+		remove(getcwd()+'/arcDB')
+		return out
 	def getHash(self,arc):
 		ourhash = sha1()
 		ourhash.update(str(arc))
@@ -45,8 +50,8 @@ class Arcs:
 		else:
 			index = self.length
 			pointArcs.append(arcs)
-			self.db[h]=str(index)
-			self.db[self.getHash(list(reversed(arcs)))]=str(~index)
+			self.db[h]=index
+			self.db[self.getHash(list(reversed(arcs)))]=~index
 			self.push(arcs)
 			return index
 		
