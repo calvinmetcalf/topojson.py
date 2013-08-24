@@ -10,37 +10,12 @@ from decimal import Decimal
 e = 1e-6
 def isInfinit(n):
 	return abs(n)==float('inf')
-
-def topology (objects, options=False):
-	Q = 1e4; # precision of quantization
-	id = lambda d:d['id']
-	def propertyTransform (outprop, key, inprop):
+def property_transform (outprop, key, inprop):
 		outprop[key]=inprop
 		return True
-	stitchPoles = True
-	verbose = False
-	emax = 0
-	system = False
-	objectName = 'name'
-	if type(options)==type({}):
-		if options.has_key('verbose'):
-			verbose = not not options['verbose']
-		if options.has_key('stitch-poles'):
-			stitchPoles = not not options["stitch-poles"]
-		if options.has_key('coordinate-system'):
-			system = systems[options["coordinate-system"]]
-		if options.has_key('quantization'):
-			Q = float(options["quantization"])
-		if options.has_key('id'):
-			id = options['id']
-		if options.has_key('property-transform'):
-			propertyTransform = options["property-transform"]
-		if options.has_key('name'):
-			objectName = options['name']
-	if objects.has_key('type') and objects['type']=='FeatureCollection':
-		objects = {objectName:objects}
-	ln = Line(Q)
-	
+def topology (objects, stitchPoles=True,verbose=False,quantization=1e4,id_key='id',property_transform=property_transform,system = False,simplify=False):
+	ln = Line(quantization)
+	id_func = lambda x:x[id_key]
 	
 	[x0,x1,y0,y1]=bound(objects)
 	
@@ -50,8 +25,6 @@ def topology (objects, options=False):
 			system = systems["cartesian"]
 		else:
 			system = systems["spherical"]
-		if type(options)==type({}):
-			options["coordinate-system"] = system['name']
 	if system == systems['spherical']:
 		if oversize:
 			raise Exception(u"spherical coordinates outside of [±180°, ±90°]")
@@ -75,9 +48,9 @@ def topology (objects, options=False):
 		y0 = 0;
 	if isInfinit(y1):
 		y1 = 0;
-	[kx,ky]=makeKs(Q,x0,x1,y0,y1)
-	if not Q:
-		Q = x1 + 1
+	[kx,ky]=makeKs(quantization,x0,x1,y0,y1)
+	if not quantization:
+		quantization = x1 + 1
 		x0 = y0 = 0
 	class findEmax(types):
 		def __init__(self,obj):
@@ -135,7 +108,7 @@ def topology (objects, options=False):
 				geometry = {};
 			else:
 				types.geometry(self,geometry)
-			geometry['id'] = id(geometry)
+			geometry['id'] = id_func(geometry)
 			if geometry['id'] == None:
 				del geometry['id']
 			properties0 = geometry['properties']
@@ -143,7 +116,7 @@ def topology (objects, options=False):
 				properties1 = {}
 				del geometry['properties']
 				for key0 in properties0:
-					if propertyTransform(properties1, key0, properties0[key0]):
+					if property_transform(properties1, key0, properties0[key0]):
 						geometry['properties'] = properties1
 			if geometry.has_key('arcs'):
 				del geometry['coordinates']
@@ -160,13 +133,13 @@ def topology (objects, options=False):
 		'arcs': ln.getArcs()
 	}
 
-def makeKs(Q,x0,x1,y0,y1):
+def makeKs(quantization,x0,x1,y0,y1):
 	[x,y]=[1,1]
-	if Q:
+	if quantization:
 		if x1 - x0:
-			x= (Q - 1.0) / (x1 - x0)
+			x= (quantization - 1.0) / (x1 - x0)
 		if y1 - y0:
-			y=(Q - 1.0) / (y1 - y0)
+			y=(quantization - 1.0) / (y1 - y0)
 	return [x,y]
 def linesEqual(a, b):
 	if not(type(a)==type(b)==type([])):

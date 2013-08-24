@@ -1,5 +1,5 @@
 from arcs import Arcs
-isPoint = lambda x : type(x)==type([]) and len(x)==2
+isPoint = lambda x : type(x)==type([]) and len(x)==2 and all(map(lambda xx:isinstance(xx,int) or isinstance(xx,float),x))
 class strut(list):
 	def __init__(self,ite=[]):
 		self.index=0
@@ -17,7 +17,7 @@ def linesEqual(a, b):
 		i+=1
 	return True;
 def pointCompare(a, b):
-	if isPoint(a) and isPoint(b):
+	if all(map(isPoint, (a,b))):
 		return int(a[0]) - int(b[0]) or int(a[1]) - int(b[1])
 def lineContians(line, lineLine):
 	for subLine in lineLine:
@@ -64,7 +64,7 @@ class Line:
 			p = t
 			k+=1
 		# If no shared starting point is found for closed lines, rotate to minimum.
-		if k == n and len(p) > 1:
+		if k == n and isinstance(p,list) and len(p) > 1:
 			point0 = points[0]
 			i = 2
 			k=0
@@ -103,7 +103,7 @@ class Line:
 	def lineClosed(self,points):
 		return self.line(points,False)
 	def lineOpen(self,points):
-		self.line(points,True)
+		return self.line(points,True)
 	def mapFunc (self,arc):
 		if len(arc)==2 and type(arc[0])==type(1):
 			arc= [arc]
