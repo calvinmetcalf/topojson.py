@@ -27,28 +27,6 @@ def lineContians(line, lineLine):
 class Line:
 	def __init__(self,Q):
 		self.arcs = Arcs(Q)
-	def matchForward(self,b,arthur):
-		i = 0
-		n = len(arthur)
-		if len(b) != n:
-			return False
-		while i < n:
-			if pointCompare(arthur[i], b[i]):
-				return False;
-			i+=1
-			self.lineArcs.append(b.index)
-			return True;
-	def matchBackward(self,b,arthur):
-		i = 0
-		n = len(arthur)
-		if len(b) != n:
-			return False
-		while i<n:
-			if pointCompare(arthur[i], b[n - i - 1]):
-				return False
-			i+=1
-		self.lineArcs.append(~b.index)
-		return True
 	def arc(self,alice, last=False):
 		n = len(alice)
 		if last and not len(self.lineArcs) and n == 1:
