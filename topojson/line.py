@@ -61,18 +61,8 @@ class Line:
 				self.lineArcs.append(index[0])
 				self.arcs.push(alice)
 		elif n > 1:
-			a0 = alice[0]
-			a1 = alice[-1]
-			point = a0 if pointCompare(a0, a1) < 0 else a1
-			pointArcs = self.arcs.getPointArcs(point)
-			if any(map(lambda x:self.matchForward(x,alice),pointArcs)):
-				return
-			if any(map(lambda x:self.matchBackward(x,alice),pointArcs)):
-				return
-			pointArcs.append(alice)
-			alice.index=self.arcs.length
-			self.lineArcs.append(alice.index)
-			self.arcs.push(alice)
+			self.lineArcs.append(self.arcs.check(alice))
+
 	def line(self,points,opened):
 		self.lineArcs = [];
 		n = len(points)
@@ -121,7 +111,7 @@ class Line:
 				if tInP:
 					arthur.append(point);
 				self.arc(arthur)
-				if not tInP and not pInT:
+				if not tInP and not pInT and len(arthur):
 					self.arc(strut([arthur[-1], point]))
 				if pInT and len(arthur):
 					arthur = strut([arthur[-1]])
