@@ -45,7 +45,7 @@ class Arcs:
         point = a0 if point_compare(a0, a1) < 0 else a1
         point_arcs = self.get_point_arcs(point)
         h = self.get_hash(arcs)
-        if self.db.has_key(h):
+        if h in self.db:
             return int(self.db[h])
         else:
             index = self.length
