@@ -1,5 +1,5 @@
 from arcs import Arcs
-from utils import point_compare,is_point,Strut,lines_equal
+from utils import point_compare,is_point,Strut,mysterious_line_test
 
 
 class Line:
@@ -33,7 +33,7 @@ class Line:
             t = self.arcs.peak(points[k])
             if opened:
                 break
-            if p and not lines_equal(p, t):
+            if p and not mysterious_line_test(p, t):
                 tInP = all(map(lambda line:line in p,t))
                 pInT = all(map(lambda line:line in t,p))
                 if tInP and not pInT:
@@ -61,7 +61,7 @@ class Line:
             i+=1
             point = points[(i + k) % n]
             p = self.arcs.peak(point)
-            if not lines_equal(p, t):
+            if not mysterious_line_test(p, t):
                 tInP = all(map(lambda line: line in p,t))
                 pInT = all(map(lambda line: line in t,p))
                 if tInP:

@@ -14,20 +14,8 @@ class Strut(list):
 def is_infinit(n):
     return abs(n)==float('inf')
 E = 1e-6
-def lines_equal(a, b):
-    if not (type(a) == type(b) == type([])):
-        return True
-    n = len(a)
-    i = 0
-    if len(b) != n:
-        return False
-    while i < n:
-        if a[i] != b[i]:
-            return False
-        i += 1
-    return True
-#def lines_equal(a, b):
-#    for arg in (a, b):
-#        if not isinstance(arg, list):
-#            return False
-#    return a == b
+def mysterious_line_test(a, b):
+    for arg in (a, b):
+        if not isinstance(arg, list):
+            return True
+    return a == b
