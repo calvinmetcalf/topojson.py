@@ -1,24 +1,24 @@
 from hashtable import hashtable
 import shelve
-from os import getcwd,remove
+from os import remove
 from hashlib import sha1
-isPoint = lambda x : type(x)==type([]) and len(x)==2
-def pointCompare(a, b):
-    if isPoint(a) and isPoint(b):
-        return int(a[0]) - int(b[0]) or int(a[1]) - int(b[1])
+from tempfile import mkdtemp
+from utils import point_compare
 class Arcs:
     def __init__(self,Q):
         self.coincidences = hashtable(Q * 10)
         self.arcsByPoint = hashtable(Q * 10)
         self.pointsByPoint = hashtable(Q * 10)
-        self.arcs= shelve.open(getcwd()+'/arcDB')
+        self.arc_db_path=mkdtemp()+'/arc_db'
+        self.arcs= shelve.open(self.arc_db_path)
         self.length=0
-        self.db = shelve.open(getcwd()+'/storage')
-    def getIndex(self,point):
+        self.storage_path = mkdtemp()+'/db'
+        self.db = shelve.open(self.storage_path)
+    def get_index(self,point):
         return self.pointsByPoint.get(point)
-    def getPointArcs(self,point):
+    def get_point_arcs(self,point):
         return self.arcsByPoint.get(point)
-    def coincidenceLines(self,point):
+    def coincidence_lines(self,point):
         return self.coincidences.get(point)
     def peak(self,point):
         return self.coincidences.peak(point)
@@ -28,30 +28,30 @@ class Arcs:
         return self.length
     def map(self,func):
         self.db.close()
-        remove(getcwd()+'/storage')
+        remove(self.storage_path)
         out = []
         for num in range(0,self.length):
             out.append(func(self.arcs[str(num)]))
         self.arcs.close()
-        remove(getcwd()+'/arcDB')
+        remove(self.arc_db_path)
         return out
-    def getHash(self,arc):
+    def get_hash(self,arc):
         ourhash = sha1()
         ourhash.update(str(arc))
         return ourhash.hexdigest()
     def check(self,arcs):
         a0 = arcs[0]
         a1 = arcs[-1]
-        point = a0 if pointCompare(a0, a1) < 0 else a1
-        pointArcs = self.getPointArcs(point)
-        h = self.getHash(arcs)
+        point = a0 if point_compare(a0, a1) < 0 else a1
+        point_arcs = self.get_point_arcs(point)
+        h = self.get_hash(arcs)
         if self.db.has_key(h):
             return int(self.db[h])
         else:
             index = self.length
-            pointArcs.append(arcs)
+            point_arcs.append(arcs)
             self.db[h]=index
-            self.db[self.getHash(list(reversed(arcs)))]=~index
+            self.db[self.get_hash(list(reversed(arcs)))]=~index
             self.push(arcs)
             return index
         

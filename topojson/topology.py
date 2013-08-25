@@ -7,10 +7,7 @@ from line import Line
 from clockwise import clock
 from decimal import Decimal
 from simplify import simplify_object
-
-E = 1e-6
-def isInfinit(n):
-    return abs(n)==float('inf')
+from utils import is_infinit,E
 def property_transform (outprop, key, inprop):
         outprop[key]=inprop
         return True
@@ -41,16 +38,16 @@ def topology (objects, stitchPoles=True,verbose=False,quantization=1e4,id_key='i
             y0 = -90
         if y1 > 90 - E:
             y1 = 90;
-    if isInfinit(x0):
+    if is_infinit(x0):
         x0 = 0
-    if isInfinit(x1):
+    if is_infinit(x1):
         x1 = 0;
 
-    if isInfinit(y0):
+    if is_infinit(y0):
         y0 = 0;
-    if isInfinit(y1):
+    if is_infinit(y1):
         y1 = 0;
-    [kx,ky]=makeKs(quantization,x0,x1,y0,y1)
+    [kx,ky]=make_ks(quantization,x0,x1,y0,y1)
     if not quantization:
         quantization = x1 + 1
         x0 = y0 = 0
@@ -72,16 +69,16 @@ def topology (objects, stitchPoles=True,verbose=False,quantization=1e4,id_key='i
     finde=findEmax(objects)
     emax = finde.emax
     clock(objects,system['ringArea'])
-    class findCoincidences(types):
+    class find_coincidences(types):
         def line(self,line):
             for point in line:
-                lines = ln.arcs.coincidenceLines(point)
+                lines = ln.arcs.coincidence_lines(point)
                 if not line in lines:
                     lines.append(line)
-    fcInst = findCoincidences(objects)
-    polygon = lambda poly:map(ln.lineClosed,poly)
+    fcInst = find_coincidences(objects)
+    polygon = lambda poly:map(ln.line_closed,poly)
     #Convert features to geometries, and stitch together arcs.
-    class makeTopo(types):
+    class make_topo(types):
         def Feature (self,feature):
             geometry = feature["geometry"]
             if feature['geometry'] == None:
@@ -101,11 +98,11 @@ def topology (objects, stitchPoles=True,verbose=False,quantization=1e4,id_key='i
         def MultiPolygon(self,multiPolygon):
             multiPolygon['arcs'] = map(polygon,multiPolygon['coordinates'])
         def Polygon(self,polygon):
-             polygon['arcs'] = map(ln.lineClosed,polygon['coordinates'])
+             polygon['arcs'] = map(ln.line_closed,polygon['coordinates'])
         def MultiLineString(self,multiLineString):
-            multiLineString['arcs'] = map(ln.lineOpen,multiLineString['coordinates'])
+            multiLineString['arcs'] = map(ln.line_open,multiLineString['coordinates'])
         def LineString(self,lineString):
-            lineString['arcs'] = ln.lineOpen(lineString['coordinates'])
+            lineString['arcs'] = ln.line_open(lineString['coordinates'])
         def geometry(self,geometry):
             if geometry == None:
                 geometry = {};
@@ -124,7 +121,7 @@ def topology (objects, stitchPoles=True,verbose=False,quantization=1e4,id_key='i
             if geometry.has_key('arcs'):
                 del geometry['coordinates']
             return geometry;
-    makeTopoInst = makeTopo(objects)
+    make_topo_inst = make_topo(objects)
     return {
         'type': "Topology",
         'bbox': [x0, y0, x1, y1],
@@ -132,11 +129,11 @@ def topology (objects, stitchPoles=True,verbose=False,quantization=1e4,id_key='i
             'scale': [1.0 / kx, 1.0 / ky],
             'translate': [x0, y0]
         },
-        'objects': makeTopoInst.outObj,
-        'arcs': ln.getArcs()
+        'objects': make_topo_inst.outObj,
+        'arcs': ln.get_arcs()
     }
 
-def makeKs(quantization,x0,x1,y0,y1):
+def make_ks(quantization,x0,x1,y0,y1):
     [x,y]=[1,1]
     if quantization:
         if x1 - x0:
@@ -144,21 +141,3 @@ def makeKs(quantization,x0,x1,y0,y1):
         if y1 - y0:
             y=(quantization - 1.0) / (y1 - y0)
     return [x,y]
-def linesEqual(a, b):
-    if not(type(a)==type(b)==type([])):
-        return True
-    n = len(a);
-    i = 0
-    if len(b) != n:
-        return False
-    while i < n:
-        if a[i] != b[i]:
-            return False;
-        i+=1
-    return True;
-
-def pointCompare(a, b):
-    if isPoint(a) and isPoint(b):
-        return a[0] - b[0] or a[1] - b[1]
-
-isPoint = lambda x : type(x)==type([]) and len(x)==2
