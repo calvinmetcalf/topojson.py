@@ -13,13 +13,13 @@ class types:
     def __init__(self,obj):
         self.obj(obj)
     def Feature(self,feature):
-        if feature.has_key('geometry'):
+        if 'geometry' in feature:
             self.geometry(feature['geometry'])
     def FeatureCollection(self,collection):
         for feature in collection['features']:
             self.Feature(feature)
     def GeometryCollection(self,collection):
-        if collection.has_key('geometries'):
+        if 'geometry' in collection:
             for geometry in collection['geometries']:
                 self.geometry(geometry)
     def LineString(self,lineString):
@@ -40,7 +40,7 @@ class types:
     def obj(self,obj):
         if obj == None :
             self.outObj = None
-        elif not obj.has_key('type'):
+        elif not ('type' in obj):
             self.outObj = {}
             for fName in obj:
                 self.outObj[fName]=self.FeatureCollection(obj[fName])

@@ -83,9 +83,9 @@ def topology (objects, stitchPoles=True,verbose=False,quantization=1e4,id_key='i
             geometry = feature["geometry"]
             if feature['geometry'] == None:
                 geometry = {};
-            if feature.has_key('id'):
+            if 'id' in feature:
                 geometry['id'] = feature['id']
-            if feature.has_key('properties'):
+            if 'properties' in feature:
                 geometry['properties'] = feature['properties']
             return self.geometry(geometry);
         def FeatureCollection(self,collection):
@@ -118,7 +118,7 @@ def topology (objects, stitchPoles=True,verbose=False,quantization=1e4,id_key='i
                 for key0 in properties0:
                     if property_transform(properties1, key0, properties0[key0]):
                         geometry['properties'] = properties1
-            if geometry.has_key('arcs'):
+            if 'arcs' in geometry:
                 del geometry['coordinates']
             return geometry;
     make_topo_inst = make_topo(objects)

@@ -7,7 +7,7 @@ def convert(geojson,topojson,object_name=False, *args, **kwargs):
     elif isinstance(geojson,str) or isinstance(geojson,unicode):
         inFile = open(geojson)
         input_dict = load(inFile)
-        if not object_name and input_dict.has_key('type') and hasattr(inFile,'name') and inFile.name.lower().endswith('.geojson'):
+        if not object_name and 'type' in input_dict and hasattr(inFile,'name') and inFile.name.lower().endswith('.geojson'):
             input_dict = {inFile.name[:-8].split('/')[-1]:input_dict}
     elif isinstance(geojson,file):
         input_dict=load(geojson)
