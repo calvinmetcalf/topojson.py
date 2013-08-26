@@ -1,7 +1,7 @@
 from mytypes import types
 
 def bound(objects):
-    class boundit(types):
+    class Bounds(types):
         def __init__(self):
             self.x0=self.y0=float('inf')
             self.x1=self.y1=-float('inf')
@@ -16,6 +16,6 @@ def bound(objects):
                 self.y0 = y
             if y > self.y1:
                 self.y1 = y
-    b=boundit()
+    b=Bounds()
     b.obj(objects)
     return [b.x0,b.x1,b.y0,b.y1]
