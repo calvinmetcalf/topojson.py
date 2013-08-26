@@ -1,7 +1,7 @@
-from mytypes import types
+from mytypes import Types
 
 def bound(objects):
-    class Bounds(types):
+    class Bounds(Types):
         def __init__(self):
             self.x0=self.y0=float('inf')
             self.x1=self.y1=-float('inf')

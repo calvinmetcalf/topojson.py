@@ -1,5 +1,5 @@
 
-typeGeometries = (
+GEOMETRY_TYPES = (
   'LineString',
   'MultiLineString',
   'MultiPoint',
@@ -9,7 +9,7 @@ typeGeometries = (
   'GeometryCollection'
 )
 
-class types:
+class Types:
     def __init__(self,obj):
         self.obj(obj)
     def Feature(self,feature):
@@ -48,11 +48,11 @@ class types:
             self.outObj = self.Feature(obj)
         elif obj['type']=='FeatureCollection':
             self.outObj = self.FeatureCollection(obj)
-        elif obj['type'] in typeGeometries:
+        elif obj['type'] in GEOMETRY_TYPES:
             self.outObj = self.geometry(obj)
         return self.outObj
     def geometry(self,geometry):
-        if not (geometry != None and geometry['type'] in typeGeometries):
+        if not (geometry != None and geometry['type'] in GEOMETRY_TYPES):
             return None
         elif geometry['type']== 'LineString':
             return self.LineString(geometry)

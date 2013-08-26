@@ -1,4 +1,4 @@
-from mytypes import types
+from mytypes import Types
 
 def stitch (objects, options=False):
     verbose = False;
@@ -6,7 +6,7 @@ def stitch (objects, options=False):
     if type(options)==type({}) and options.has_key("verbose"):
         verbose = not not options['verbose']
         
-    class stitchit(types):
+    class Stitch(Types):
         def polygon(self,polygon):
             for line in polygon:
                 n = len(line)
@@ -38,4 +38,4 @@ def stitch (objects, options=False):
                     i+=1
         def point(self,p):
             return p
-    stitchit(objects)
+    Stitch(objects)

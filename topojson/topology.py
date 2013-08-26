@@ -1,5 +1,5 @@
 # coding=utf8
-from mytypes import types
+from mytypes import Types
 from stitchpoles import stitch
 from coordinatesystems import systems
 from bounds import bound
@@ -11,7 +11,7 @@ from utils import is_infinit,E
 def property_transform (outprop, key, inprop):
         outprop[key]=inprop
         return True
-def topology (objects, stitchPoles=True,verbose=False,quantization=1e4,id_key='id',property_transform=property_transform,system = False,simplify=False):
+def topology (objects, stitchPoles=True,quantization=1e4,id_key='id',property_transform=property_transform,system = False,simplify=False):
     ln = Line(quantization)
     id_func = lambda x:x[id_key]
     if simplify:
@@ -52,7 +52,7 @@ def topology (objects, stitchPoles=True,verbose=False,quantization=1e4,id_key='i
         quantization = x1 + 1
         x0 = y0 = 0
         
-    class findEmax(types):
+    class findEmax(Types):
         def __init__(self,obj):
             self.emax=0
             self.obj(obj)
@@ -69,7 +69,7 @@ def topology (objects, stitchPoles=True,verbose=False,quantization=1e4,id_key='i
     finde=findEmax(objects)
     emax = finde.emax
     clock(objects,system['ringArea'])
-    class find_coincidences(types):
+    class find_coincidences(Types):
         def line(self,line):
             for point in line:
                 lines = ln.arcs.coincidence_lines(point)
@@ -78,7 +78,7 @@ def topology (objects, stitchPoles=True,verbose=False,quantization=1e4,id_key='i
     fcInst = find_coincidences(objects)
     polygon = lambda poly:map(ln.line_closed,poly)
     #Convert features to geometries, and stitch together arcs.
-    class make_topo(types):
+    class make_topo(Types):
         def Feature (self,feature):
             geometry = feature["geometry"]
             if feature['geometry'] == None:
@@ -107,7 +107,7 @@ def topology (objects, stitchPoles=True,verbose=False,quantization=1e4,id_key='i
             if geometry == None:
                 geometry = {};
             else:
-                types.geometry(self,geometry)
+                Types.geometry(self,geometry)
             geometry['id'] = id_func(geometry)
             if geometry['id'] == None:
                 del geometry['id']

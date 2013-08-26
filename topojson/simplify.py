@@ -1,5 +1,5 @@
 #from https://github.com/omarestrella/simplify.py
-from mytypes import types
+from mytypes import Types
 
 def getSquareDistance(p1, p2):
     """
@@ -119,7 +119,7 @@ def simplify(points, tolerance=0.1, highestQuality=True):
     return points
 
 def simplify_object(obj,tolerance):
-    class Simplify(types):
+    class Simplify(Types):
         def line(self,points):
             return simplify(points,tolerance)
         def polygon(self,coordinates):
