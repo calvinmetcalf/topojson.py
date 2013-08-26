@@ -8,7 +8,7 @@ def hasher(size):
             return (~key if key < 0 else key) & mask
     return retFunc
 
-class hashtable:
+class Hashtable:
     def __init__(self,size):
         self.size = 1 << int(ceil(log(size)/log(2)))
         self.table = map(lambda x:False,range(0,int(size)))

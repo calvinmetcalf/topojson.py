@@ -1,19 +1,21 @@
-from hashtable import hashtable
-import shelve
-from os import remove
+from hashtable import Hashtable
+#import shelve
+#from os import remove
 from hashlib import sha1
-from tempfile import mkdtemp
+#from tempfile import mkdtemp
 from utils import point_compare
 class Arcs:
     def __init__(self,Q):
-        self.coincidences = hashtable(Q * 10)
-        self.arcsByPoint = hashtable(Q * 10)
-        self.pointsByPoint = hashtable(Q * 10)
-        self.arc_db_path=mkdtemp()+'/arc_db'
-        self.arcs= shelve.open(self.arc_db_path)
+        self.coincidences = Hashtable(Q * 10)
+        self.arcsByPoint = Hashtable(Q * 10)
+        self.pointsByPoint = Hashtable(Q * 10)
+        #self.arc_db_path=mkdtemp()+'/arc_db'
+        #self.arcs= shelve.open(self.arc_db_path)
+        self.arcs={}
         self.length=0
-        self.storage_path = mkdtemp()+'/db'
-        self.db = shelve.open(self.storage_path)
+        #self.storage_path = mkdtemp()+'/db'
+        #self.db = shelve.open(self.storage_path)
+        self.db={}
     def get_index(self,point):
         return self.pointsByPoint.get(point)
     def get_point_arcs(self,point):
@@ -27,13 +29,13 @@ class Arcs:
         self.length+=1
         return self.length
     def map(self,func):
-        self.db.close()
-        remove(self.storage_path)
+        #self.db.close()
+        #remove(self.storage_path)
         out = []
         for num in range(0,self.length):
             out.append(func(self.arcs[str(num)]))
-        self.arcs.close()
-        remove(self.arc_db_path)
+        #self.arcs.close()
+        #remove(self.arc_db_path)
         return out
     def get_hash(self,arc):
         ourhash = sha1()
