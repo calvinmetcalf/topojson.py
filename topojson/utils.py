@@ -6,7 +6,7 @@ def point_compare(a, b):
 #        float(p[0]), float(p[1])
 #    except (TypeError, IndexError):
 #        return False
-is_point = lambda x : type(x)==type([]) and len(x)==2
+is_point = lambda x : isinstance(x,list) and len(x)==2
 class Strut(list):
     def __init__(self,ite=[]):
         self.index=0
