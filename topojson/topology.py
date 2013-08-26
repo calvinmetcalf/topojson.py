@@ -21,10 +21,10 @@ def topology (objects, stitchPoles=True,quantization=1e4,id_key='id',property_tr
     oversize = x0 < -180 - E or x1 > 180 + E or y0 < -90 - E or y1 > 90 + E
     if not system:
         if oversize:
-            system = systems["cartesian"]
+            system.name =systems["cartesian"]
         else:
             system = systems["spherical"]
-    if system == systems['spherical']:
+    if system.name == 'spherical':
         if oversize:
             raise Exception(u"spherical coordinates outside of [±180°, ±90°]")
         if stitchPoles:
@@ -61,14 +61,14 @@ def topology (objects, stitchPoles=True,quantization=1e4,id_key='id',property_tr
             y1 = point[1]
             x = ((x1 - x0) * kx)
             y =((y1 - y0) * ky)
-            ee = system['distance'](x1, y1, x / kx + x0, y / ky + y0)
+            ee = system.distance(x1, y1, x / kx + x0, y / ky + y0)
             if ee > self.emax:
                 self.emax = ee
             point[0] = int(x)
             point[1] = int(y)
     finde=findEmax(objects)
     emax = finde.emax
-    clock(objects,system['ringArea'])
+    clock(objects,system.ring_area)
     class find_coincidences(Types):
         def line(self,line):
             for point in line:
