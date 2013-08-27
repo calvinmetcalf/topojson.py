@@ -131,7 +131,7 @@ class Topology:
                 self.tweak(self.feature_db[db],i)
     def dump(self,f):
         self.start()
-        print('writing')
+        #print('writing')
         f.write('{"type":"Topology","bbox":')
         dump([self.bounds.x0, self.bounds.y0, self.bounds.x1, self.bounds.y1],f)
         f.write(',"transform":')
@@ -139,11 +139,11 @@ class Topology:
             'scale': [1.0 / self.kx, 1.0 / self.ky],
             'translate': [self.bounds.x0, self.bounds.y0]
         },f)
-        print('dumping objects')
+        #print('dumping objects')
         f.write(',"objects":')
         for thing in self.get_objects():
             f.write(thing)
-        print('dumping arcs')
+        #print('dumping arcs')
         f.write(',"arcs":[')
         first = True
         for arc in self.ln.get_arcs():
