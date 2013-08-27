@@ -108,4 +108,6 @@ class Line:
             i+=1
         return points
     def get_arcs (self):
-        return self.arcs.map(self.map_func)
+        for num in range(0,self.arcs.length):
+            yield self.map_func(self.arcs.arcs[str(num)])
+        self.arcs.close()

@@ -118,22 +118,26 @@ def simplify(points, tolerance=0.1, highestQuality=True):
 
     return points
 
-def simplify_object(obj,tolerance):
-    class Simplify(Types):
-        def line(self,points):
-            return simplify(points,tolerance)
-        def polygon(self,coordinates):
-            return map(self.line,coordinates)
-        def GeometryCollection(self,collection):
-            if collection.has_key('geometries'):
-                collection['geometries'] = map(self,geometry,collection['geometries'])
-        def LineString(self,lineString):
-            lineString['coordinates'] = self.line(lineString['coordinates'])
-        def MultiLineString(self,multiLineString):
-            multiLineString['coordinates']=map(self.line,multiLineString['coordinates'])
-        def MultiPolygon(self,multiPolygon):
-            multiPolygon['coordinates'] = map(self.polygon,multiPolygon['coordinates'])
-        def Polygon(self,polygon):
-            polygon['coordinates']=self.polygon(polygon['coordinates'])
-    Simplify(obj)
-    return obj
+
+class Simplify(Types):
+    def __init__(self, tolerance):
+        self.tolerance = tolerance
+    def Feature(self,feature):
+        if 'geometry' in feature:
+            feature['geometry'] = self.geometry(feature['geometry'])
+        return feature
+    def line(self,points):
+        return simplify(points,self.tolerance)
+    def polygon(self,coordinates):
+        return map(self.line,coordinates)
+    def GeometryCollection(self,collection):
+        if collection.has_key('geometries'):
+            collection['geometries'] = map(self.geometry,collection['geometries'])
+    def LineString(self,lineString):
+        lineString['coordinates'] = self.line(lineString['coordinates'])
+    def MultiLineString(self,multiLineString):
+        multiLineString['coordinates']=map(self.line,multiLineString['coordinates'])
+    def MultiPolygon(self,multiPolygon):
+        multiPolygon['coordinates'] = map(self.polygon,multiPolygon['coordinates'])
+    def Polygon(self,polygon):
+        polygon['coordinates']=self.polygon(polygon['coordinates'])
