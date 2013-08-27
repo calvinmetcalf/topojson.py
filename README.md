@@ -2,14 +2,20 @@
 
 Port of [topojson](https://github.com/mbostock/topojson) more of a translation then a port at this point, licensed under same BSD license as original, current usage:
 
-input can be a file-like object, a path to a file, or a dict, output can be a path or a file-like object, if omited a dict is returned
+
 
 current tested options are `quantization` and `simplify`.
 
 ```python
-from topojson import topojson
-#give it a path in and out
-topojson(inPath,outPath, quantization=1e6, simplify=0.0001)
+from topojson import Topology
+topo = Topology(quantization=1e6, simplify=0.0001)
+#either give it a object name string and a feature
+topo.add('object name',feature)
+#or use the object factory
+factory = topo.object_factory('object name')
+factory(feature)
+#when your done give it a file like object
+topo.dump(open('some path','w'))
 ```
 
 can also go the other way.
