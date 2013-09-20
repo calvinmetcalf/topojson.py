@@ -29,4 +29,5 @@ def clockwisePolygon(rings,area):
         r=rings[i]
         if area(rings[i]) > 0:
             r=reversed(r)
+        i+=1
     return rings
