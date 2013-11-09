@@ -1,33 +1,25 @@
-def clock(geo,area):
-    if geo.has_key('features') and isinstance(geo['features'],list):
-        clockCollection(geo['features'],area)
-        return map(lambda x:clockFeatures(x,area),geo['features'])
-    elif geo.has_key('features') and isinstance(geo['features'],list):
-        return clockCollection(geo,area)
-    else:
-        out = {}
-        for feature in geo:
-            out[feature] = clock(geo[feature],area)
-        return out
-clockCollection = lambda geo,area : map(lambda x:clockFeatures(x,area),geo)
-def clockFeatures(geo,area):
-    if geo.has_key('type'):
-        if geo['type']=='Polygon':
-            clockwisePolygon(geo['coordinates'],area)
-        if geo['type']=='MultiPolygon':
-            map(lambda x:clockwisePolygon(x,area),geo['coordinates'])
-def clockwisePolygon(rings,area):
-    i=0
-    n=0
-    r = rings[i]
-    if len(rings):
-        n=len(rings)
-        if area(r)<0:
-            r=reversed(r)
-    i+=1
-    while i<n:
-        r=rings[i]
-        if area(rings[i]) > 0:
-            r=reversed(r)
-        i+=1
-    return rings
+class Clock:
+    def __init__(self,area):
+        self.area=area
+    def clock(self,feature):
+        if 'geometries' in feature:
+            feature['geometries'] = map(self.clock_geometry,feature['geometries'])
+        elif 'geometry' in feature:
+            feature['geometry']=self.clock_geometry(feature['geometry'])
+        return feature
+    def clock_geometry(self,geo):
+        if 'type' in geo:
+            if geo['type']=='Polygon' or geo['type']=='MultiLineString':
+                geo['coordinates'] = self.clockwise_polygon(geo['coordinates'])
+            elif geo['type']=='MultiPolygon':
+                geo['coordinates'] = map(lambda x:self.clockwise_polygon(x),geo['coordinates'])
+            elif geo['type']=='LineString':
+                geo['coordinates'] = self.clockwise_ring(geo['coordinates'])
+        return geo
+    def clockwise_polygon(self,rings):
+        return map(lambda x:self.clockwise_ring(x),rings)
+    def clockwise_ring(self,ring):
+        if self.area(ring) > 0:
+            return list(reversed(ring))
+        else:
+            return ring

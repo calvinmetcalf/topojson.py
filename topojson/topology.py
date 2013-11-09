@@ -21,7 +21,7 @@ def topology (objects, stitchPoles=True,quantization=1e4,id_key='id',property_tr
     oversize = x0 < -180 - E or x1 > 180 + E or y0 < -90 - E or y1 > 90 + E
     if not system:
         if oversize:
-            system.name =systems["cartesian"]
+            system =systems["cartesian"]
         else:
             system = systems["spherical"]
     if system.name == 'spherical':
