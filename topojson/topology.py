@@ -4,7 +4,7 @@ from stitchpoles import stitch
 from coordinatesystems import systems
 from bounds import bound
 from line import Line
-from clockwise import clock
+from clockwise import Clock
 from decimal import Decimal
 from simplify import simplify_object
 from utils import is_infinit,E
