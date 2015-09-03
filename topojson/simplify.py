@@ -125,7 +125,7 @@ def simplify_object(obj,tolerance):
         def polygon(self,coordinates):
             return map(self.line,coordinates)
         def GeometryCollection(self,collection):
-            if collection.has_key('geometries'):
+            if 'geometries' in collection:
                 collection['geometries'] = map(self,geometry,collection['geometries'])
         def LineString(self,lineString):
             lineString['coordinates'] = self.line(lineString['coordinates'])

@@ -3,7 +3,7 @@ from mytypes import Types
 def stitch (objects, options=False):
     verbose = False;
 
-    if type(options)==type({}) and options.has_key("verbose"):
+    if type(options)==type({}) and 'verbose' in options:
         verbose = not not options['verbose']
         
     class Stitch(Types):
