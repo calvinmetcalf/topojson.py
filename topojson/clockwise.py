@@ -3,7 +3,7 @@ class Clock:
         self.area=area
     def clock(self,feature):
         if 'geometries' in feature:
-            feature['geometries'] = map(self.clock_geometry,feature['geometries'])
+            feature['geometries'] = list(map(self.clock_geometry,feature['geometries']))
         elif 'geometry' in feature:
             feature['geometry']=self.clock_geometry(feature['geometry'])
         return feature
@@ -12,12 +12,12 @@ class Clock:
             if geo['type']=='Polygon' or geo['type']=='MultiLineString':
                 geo['coordinates'] = self.clockwise_polygon(geo['coordinates'])
             elif geo['type']=='MultiPolygon':
-                geo['coordinates'] = map(lambda x:self.clockwise_polygon(x),geo['coordinates'])
+                geo['coordinates'] = list(map(lambda x:self.clockwise_polygon(x),geo['coordinates']))
             elif geo['type']=='LineString':
                 geo['coordinates'] = self.clockwise_ring(geo['coordinates'])
         return geo
     def clockwise_polygon(self,rings):
-        return map(lambda x:self.clockwise_ring(x),rings)
+        return list(map(lambda x:self.clockwise_ring(x),rings))
     def clockwise_ring(self,ring):
         if self.area(ring) > 0:
             return list(reversed(ring))
