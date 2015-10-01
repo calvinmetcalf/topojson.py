@@ -1,4 +1,5 @@
 # coding=utf8
+from __future__ import division
 from .mytypes import Types
 from .stitchpoles import stitch
 from .coordinatesystems import systems

@@ -1,4 +1,6 @@
+from __future__ import division
 from math import ceil, log
+
 
 def hasher(size):
     mask = int(size) - 1
