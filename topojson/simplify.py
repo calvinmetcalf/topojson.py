@@ -1,5 +1,5 @@
 #from https://github.com/omarestrella/simplify.py
-from mytypes import Types
+from .mytypes import Types
 
 def getSquareDistance(p1, p2):
     """
@@ -123,16 +123,16 @@ def simplify_object(obj,tolerance):
         def line(self,points):
             return simplify(points,tolerance)
         def polygon(self,coordinates):
-            return map(self.line,coordinates)
+            return list(map(self.line,coordinates))
         def GeometryCollection(self,collection):
-            if 'geometries' in collection:
-                collection['geometries'] = map(self,geometry,collection['geometries'])
+            if collection.has_key('geometries'):
+                collection['geometries'] = list(map(self,geometry,collection['geometries']))
         def LineString(self,lineString):
             lineString['coordinates'] = self.line(lineString['coordinates'])
         def MultiLineString(self,multiLineString):
-            multiLineString['coordinates']=map(self.line,multiLineString['coordinates'])
+            multiLineString['coordinates'] = list(map(self.line,multiLineString['coordinates']))
         def MultiPolygon(self,multiPolygon):
-            multiPolygon['coordinates'] = map(self.polygon,multiPolygon['coordinates'])
+            multiPolygon['coordinates'] = list(map(self.polygon,multiPolygon['coordinates']))
         def Polygon(self,polygon):
             polygon['coordinates']=self.polygon(polygon['coordinates'])
     Simplify(obj)

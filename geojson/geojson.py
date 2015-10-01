@@ -13,7 +13,7 @@ class Transformer:
     def __init__(self,transform,arcs):
         self.scale = transform['scale']
         self.translate = transform['translate']
-        self.arcs = map(self.convert_arc,arcs)
+        self.arcs = list(map(self.convert_arc,arcs))
     def convert_arc(self,arc):
         out_arc = []
         previous=[0,0]
@@ -23,7 +23,7 @@ class Transformer:
             out_arc.append(self.convert_point(previous))
         return out_arc
     def reversed_arc(self,arc):
-        return map(None,reversed(self.arcs[~arc]))
+        return list(map(None,reversed(self.arcs[~arc])))
     def stitch_arcs(self,arcs):
         line_string = []
         for arc in arcs:
@@ -40,7 +40,7 @@ class Transformer:
                 line_string.extend(line)
         return line_string
     def stich_multi_arcs(self,arcs):
-        return map(self.stitch_arcs,arcs)
+        return list(map(self.stitch_arcs,arcs))
     def convert_point(self,point):
         return [point[0]*self.scale[0]+self.translate[0],point[1]*self.scale[1]+self.translate[1]]
     def feature(self,feature):
@@ -76,7 +76,7 @@ class Transformer:
         geometry['coordinates']=self.convert_point(geometry[coordinates])
         return geometry
     def multi_point(self,geometry):
-        geometry['coordinates']=map(self.convert_point,geometry[coordinates])
+        geometry['coordinates']= list(map(self.convert_point,geometry[coordinates]))
         return  geometry
     def line_string(self,geometry):
         geometry['coordinates']=self.stitch_arcs(geometry['arcs'])
@@ -87,12 +87,12 @@ class Transformer:
         del geometry['arcs']
         return geometry
     def multi_poly(self,geometry):
-        geometry['coordinates']=map(self.stich_multi_arcs,geometry['arcs'])
+        geometry['coordinates']= list(map(self.stich_multi_arcs,geometry['arcs']))
         del geometry['arcs']
         return geometry
     def geometry_collection(self,geometry):
         out = {'type':'FeatureCollection'}
-        out['features']=map(self.feature,geometry['geometries'])
+        out['features']= list(map(self.feature,geometry['geometries']))
         return out
 def from_topo(topo,obj_name):
     if obj_name in topo['objects']:

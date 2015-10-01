@@ -1,5 +1,5 @@
-from arcs import Arcs
-from utils import point_compare,is_point,Strut,mysterious_line_test
+from .arcs import Arcs
+from .utils import point_compare,is_point,Strut,mysterious_line_test
 
 
 class Line:

@@ -1,15 +1,18 @@
-from topology import topology
 from json import load,dump
+import io
 
-def convert(geojson,topojson,object_name=False, *args, **kwargs):
+from .topology import topology
+
+
+def convert(geojson,topojson=None,object_name=False, *args, **kwargs):
     if isinstance(geojson,dict):
         input_dict = geojson
-    elif isinstance(geojson,str) or isinstance(geojson,unicode):
+    elif isinstance(geojson,str):
         inFile = open(geojson)
         input_dict = load(inFile)
         if not object_name and 'type' in input_dict and hasattr(inFile,'name') and inFile.name.lower().endswith('.geojson'):
             input_dict = {inFile.name[:-8].split('/')[-1]:input_dict}
-    elif isinstance(geojson,file):
+    elif isinstance(geojson, io.TextIOWrapper):
         input_dict=load(geojson)
     if 'type' in input_dict:
         if object_name:
@@ -17,10 +20,10 @@ def convert(geojson,topojson,object_name=False, *args, **kwargs):
         else:
             input_dict = {'name':input_dict}
     output_dict = topology(input_dict, *args, **kwargs)
-    if isinstance(topojson,str) or isinstance(topojson,unicode):
+    if isinstance(topojson,str) or isinstance(topojson, str):
         with open(topojson,'w') as f:
             dump(output_dict,f)
-    elif isinstance(topojson,file):
+    elif isinstance(topojson, io.TextIOWrapper):
         dump(output_dict,topojson)
     else:
         return output_dict

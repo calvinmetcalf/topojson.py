@@ -1,11 +1,11 @@
-from mytypes import Types
+from .mytypes import Types
 
 def stitch (objects, options=False):
     verbose = False;
 
     if type(options)==type({}) and 'verbose' in options:
         verbose = not not options['verbose']
-        
+
     class Stitch(Types):
         def polygon(self,polygon):
             for line in polygon:

@@ -1,1 +1,1 @@
-from conversion import convert as topojson
+from .conversion import convert as topojson

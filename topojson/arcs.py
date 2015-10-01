@@ -1,9 +1,8 @@
-from hashtable import Hashtable
-#import shelve
-#from os import remove
 from hashlib import sha1
-#from tempfile import mkdtemp
-from utils import point_compare
+
+from .hashtable import Hashtable
+from .utils import point_compare
+
 class Arcs:
     def __init__(self,Q):
         self.coincidences = Hashtable(Q * 10)
@@ -39,7 +38,7 @@ class Arcs:
         return out
     def get_hash(self,arc):
         ourhash = sha1()
-        ourhash.update(str(arc))
+        ourhash.update(str(arc).encode('utf8'))
         return ourhash.hexdigest()
     def check(self,arcs):
         a0 = arcs[0]
@@ -56,4 +55,4 @@ class Arcs:
             self.db[self.get_hash(list(reversed(arcs)))]=~index
             self.push(arcs)
             return index
-        
+
