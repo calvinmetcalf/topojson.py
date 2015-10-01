@@ -5,5 +5,5 @@ setup(
     version="0.1.0",
     license="BSD",
     packages=find_packages(),
-    test_suite = 'test.topojson_test'
+    test_suite="tests"
 )
