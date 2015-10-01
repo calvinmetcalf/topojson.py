@@ -1,4 +1,5 @@
 # coding=utf8
+from __future__ import division
 from math import sqrt, pi, cos, sin, atan2, tan, atan, asin
 
 PI4 = pi / 4
