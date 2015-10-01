@@ -1,0 +1,21 @@
+{
+    "type": "FeatureCollection",
+    "features": [
+        {
+            "type": "Feature",
+            "properties": {
+                "description": "A 20°x20° box surrounding Null Island."
+            },
+            "geometry": {
+                "type": "Polygon",
+                "coordinates": [[
+                    [-10, 10],
+                    [ 10, 10],
+                    [ 10, -10],
+                    [-10, -10],
+                    [-10, 10]
+                ]]
+            }
+        }
+    ]
+}
