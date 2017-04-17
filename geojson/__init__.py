@@ -1,1 +1,1 @@
-from conversion import convert as geojson
+from .conversion import convert as geojson
