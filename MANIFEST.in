@@ -1,0 +1,2 @@
+include versioneer.py
+include topojson/_version.py
