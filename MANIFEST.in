@@ -1,2 +1,9 @@
+include *.rst *.txt *.sql *.json
+include tox.ini
+recursive-include tests *
+recursive-include docs *.rst
+recursive-include docs *.py
+prune docs/_build
+
 include versioneer.py
 include topojson/_version.py
