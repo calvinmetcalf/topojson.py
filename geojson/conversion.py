@@ -1,4 +1,4 @@
-from geojson import from_topo
+from .geojson import from_topo
 from json import load,dump
 
 def convert(topojson,input_name=None,geojson=None):
