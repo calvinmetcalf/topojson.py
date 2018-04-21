@@ -1,6 +1,7 @@
-#from https://github.com/omarestrella/simplify.py
+# from https://github.com/omarestrella/simplify.py
 from __future__ import division
 from .mytypes import Types
+
 
 def getSquareDistance(p1, p2):
     """
@@ -119,22 +120,29 @@ def simplify(points, tolerance=0.1, highestQuality=True):
 
     return points
 
-def simplify_object(obj,tolerance):
+
+def simplify_object(obj, tolerance):
     class Simplify(Types):
-        def line(self,points):
-            return simplify(points,tolerance)
-        def polygon(self,coordinates):
-            return list(map(self.line,coordinates))
-        def GeometryCollection(self,collection):
+        def line(self, points):
+            return simplify(points, tolerance)
+
+        def polygon(self, coordinates):
+            return list(map(self.line, coordinates))
+
+        def GeometryCollection(self, collection):
             if collection.has_key('geometries'):
-                collection['geometries'] = list(map(self,geometry,collection['geometries']))
-        def LineString(self,lineString):
+                collection['geometries'] = list(map(self, geometry, collection['geometries']))
+
+        def LineString(self, lineString):
             lineString['coordinates'] = self.line(lineString['coordinates'])
-        def MultiLineString(self,multiLineString):
-            multiLineString['coordinates'] = list(map(self.line,multiLineString['coordinates']))
-        def MultiPolygon(self,multiPolygon):
-            multiPolygon['coordinates'] = list(map(self.polygon,multiPolygon['coordinates']))
-        def Polygon(self,polygon):
-            polygon['coordinates']=self.polygon(polygon['coordinates'])
+
+        def MultiLineString(self, multiLineString):
+            multiLineString['coordinates'] = list(map(self.line, multiLineString['coordinates']))
+
+        def MultiPolygon(self, multiPolygon):
+            multiPolygon['coordinates'] = list(map(self.polygon, multiPolygon['coordinates']))
+
+        def Polygon(self, polygon):
+            polygon['coordinates'] = self.polygon(polygon['coordinates'])
     Simplify(obj)
     return obj

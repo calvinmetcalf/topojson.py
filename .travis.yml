@@ -1,0 +1,27 @@
+# Travis configuration file using the build matrix feature
+# Read more under http://docs.travis-ci.com/user/build-configuration/
+sudo: false
+language: python
+env:
+  matrix: 
+     - TOXENV=py27
+     - TOXENV=py36
+addons:
+  apt:
+    packages:
+      - git
+      - python-pip
+install:
+  - pip install 'tox<3.0'
+script:
+  - tox --version
+  - ./scripts/ci/conditional_tox.sh
+branches:
+  only:
+    - master
+cache:
+  directories:
+    - $HOME/.pip-cache
+
+notifications:
+  email: false
