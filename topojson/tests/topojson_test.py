@@ -28,6 +28,6 @@ class TestTopojson(object):
         from topojson.conversion import convert
 
         tj = convert(square)
-        assert tj['type'] == 'Topology'
 
-        assert jsonschema.validate(tj, self.tpscheme)
+        assert tj['type'] == 'Topology'
+        assert jsonschema.validate(tj, self.tpscheme), tj
