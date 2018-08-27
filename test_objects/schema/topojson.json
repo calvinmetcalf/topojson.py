@@ -1,0 +1,15 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "id": "https://raw.githubusercontent.com/nhuebel/TopoJSON_schema/master/topojson.json#",
+    "title": "TopoJSON object",
+    "description": "Schema for a TopoJSON object",
+    "type": "object",
+    "required": [ "type" ],
+    "properties": {
+        "bbox": { "$ref": "https://raw.githubusercontent.com/nhuebel/TopoJSON_schema/master/bbox.json" }
+    },
+    "oneOf": [
+        { "$ref": "https://raw.githubusercontent.com/nhuebel/TopoJSON_schema/master/topology.json"  },
+        { "$ref": "https://raw.githubusercontent.com/nhuebel/TopoJSON_schema/master/geometry.json" }
+    ]
+}

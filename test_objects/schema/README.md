@@ -1,0 +1,2 @@
+This is a copy of TopoJSON schema from [this](https://github.com/nhuebel/TopoJSON_schema) repository, stored locally,
+untill [correction](https://github.com/nhuebel/TopoJSON_schema/issues/1) will be merged.

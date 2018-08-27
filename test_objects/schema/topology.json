@@ -1,0 +1,54 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "id": "https://raw.githubusercontent.com/nhuebel/TopoJSON_schema/master/topology.json",
+    "title": "Topology",
+    "description": "A Topology object as defined by TopoJSON",
+    "type": "object",
+    "required": [ "objects", "arcs" ],
+    "properties": {
+        "type": { "enum": [ "Topology"] },
+        "objects": {
+	    "type": "object",
+	    "additionalProperties": {"$ref": "https://raw.githubusercontent.com/nhuebel/TopoJSON_schema/master/geometry.json"}
+        },
+        "arcs": {"$ref": "#/definitions/arcs"},
+        "transform": {"$ref": "#/definitions/transform"},
+        "bbox": { "$ref": "https://raw.githubusercontent.com/nhuebel/TopoJSON_schema/master/bbox.json" }
+    },
+    "definitions": {
+	"transform": {
+	    "type": "object",
+	    "required": [ "scale", "translate" ],
+	    "properties": {
+		"scale": {
+		    "type": "array",
+		    "items": { "type": "number"},
+		    "minItems": 2
+		},
+		"translate": {
+		    "type": "array",
+		    "items": { "type": "number"},
+		    "minItems": 2
+		}
+	    }
+	},
+	"arcs": {
+	    "type": "array",
+	    "items": {
+		"type": "array",
+		"items": {
+		    "oneOf": [ 
+			{ "$ref": "#/definitions/position"}, 
+			{ "type": "null" } 
+		    ]
+		 },
+		 "minItems": 2
+	    }
+	},
+	"position": {
+	    "type": "array",
+	    "items": { "type": "number"},
+	    "minItems": 2
+	}
+    }
+}
