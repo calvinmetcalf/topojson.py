@@ -1,6 +1,6 @@
 {
     "$schema": "http://json-schema.org/draft-04/schema#",
-    "id": "https://raw.githubusercontent.com/nhuebel/TopoJSON_schema/master/topology.json",
+    "id": "https://raw.githubusercontent.com/calvinmetcalf/topojson.py/blob/v1.1.x/test_objects/schema/topology.json",
     "title": "Topology",
     "description": "A Topology object as defined by TopoJSON",
     "type": "object",
@@ -9,11 +9,11 @@
         "type": { "enum": [ "Topology"] },
         "objects": {
 	    "type": "object",
-	    "additionalProperties": {"$ref": "https://raw.githubusercontent.com/nhuebel/TopoJSON_schema/master/geometry.json"}
+	    "additionalProperties": {"$ref": "https://raw.githubusercontent.com/calvinmetcalf/topojson.py/blob/v1.1.x/test_objects/schema/geometry.json"}
         },
         "arcs": {"$ref": "#/definitions/arcs"},
         "transform": {"$ref": "#/definitions/transform"},
-        "bbox": { "$ref": "https://raw.githubusercontent.com/nhuebel/TopoJSON_schema/master/bbox.json" }
+        "bbox": { "$ref": "https://raw.githubusercontent.com/calvinmetcalf/topojson.py/blob/v1.1.x/test_objects/schema/bbox.json" }
     },
     "definitions": {
 	"transform": {
