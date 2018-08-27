@@ -4,6 +4,7 @@
     "title": "TopoJSON bounding box",
     "description": "A bounding box as defined by TopoJSON, (2*n) elements",
     "type": "array",
-    "items": {"type": "number"},
-    "minItems": 4
+    "minItems": 4,
+    "items": {"type": "number"}
+    
 }
