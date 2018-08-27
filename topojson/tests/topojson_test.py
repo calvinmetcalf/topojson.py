@@ -1,8 +1,8 @@
 import json
 import pytest
 from os import path
-import jsonschema
 import requests as rq
+from .utils import validate_json
 
 test_dir = path.join(path.dirname(__file__), 'data')
 
@@ -28,6 +28,6 @@ class TestTopojson(object):
         from topojson.conversion import convert
 
         tj = convert(square)
-
+        print(tj)
         assert tj['type'] == 'Topology'
-        assert jsonschema.validate(tj, self.tpscheme), tj
+        assert validate_json(tj, self.tpscheme)
