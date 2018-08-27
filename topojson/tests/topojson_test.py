@@ -9,7 +9,7 @@ test_dir = path.join(path.dirname(__file__), 'data')
 
 @pytest.fixture(scope='class')
 def tpscheme(request):
-    url = 'https://raw.githubusercontent.com/Casyfill/TopoJSON_schema/bbox_correction/topojson.json'
+    url = 'https://raw.githubusercontent.com/calvinmetcalf/topojson.py/v1.1.x/test_objects/schema/topojson.json'
     request.cls.tpscheme = rq.get(url).json()
 
 
