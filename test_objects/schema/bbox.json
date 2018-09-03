@@ -1,0 +1,10 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "id": "https://raw.githubusercontent.com/calvinmetcalf/topojson.py/v1.1.x/test_objects/schema/bbox.json",
+    "title": "TopoJSON bounding box",
+    "description": "A bounding box as defined by TopoJSON, (2*n) elements",
+    "type": "array",
+    "minItems": 4,
+    "items": {"type": "number"}
+    
+}

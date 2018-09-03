@@ -1,0 +1,15 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "id": "https://raw.githubusercontent.com/calvinmetcalf/topojson.py/v1.1.x/test_objects/schema/topojson.json#",
+    "title": "TopoJSON object",
+    "description": "Schema for a TopoJSON object",
+    "type": "object",
+    "required": [ "type" ],
+    "properties": {
+        "bbox": { "$ref": "https://raw.githubusercontent.com/calvinmetcalf/topojson.py/v1.1.x/test_objects/schema/bbox.json" }
+    },
+    "oneOf": [
+        { "$ref": "https://raw.githubusercontent.com/calvinmetcalf/topojson.py/v1.1.x/test_objects/schema/topology.json"  },
+        { "$ref": "https://raw.githubusercontent.com/calvinmetcalf/topojson.py/v1.1.x/test_objects/schema/geometry.json" }
+    ]
+}

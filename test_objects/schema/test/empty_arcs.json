@@ -1,0 +1,38 @@
+{
+  "type": "Topology",
+  "objects": {
+    "example": {
+      "prop0": "value0",
+      "prop1": 0,
+      "type": "GeometryCollection",
+      "geometries": [
+        {
+          "type": "Point",
+          "properties": {
+            "prop0": "value0"
+          },
+          "coordinates": [102, 0.5]
+        },
+        {
+          "type": "LineString",
+          "properties": {
+            "prop0": "value0",
+            "prop1": 0
+          }
+        },
+        {
+          "type": "Polygon",
+          "properties": {
+            "prop0": "value0",
+            "prop1": {
+              "this": "that"
+            }
+          },
+          "arcs": []
+        }
+      ]
+    }
+  },
+  "arcs": [
+  ]
+}
